@@ -231,66 +231,78 @@
 
       const $ = (id) => document.getElementById(id);
       
-      $('connectBtn').onclick = async () => {
-        try {
-          const addr = await connectWallet();
-          if (addr) {
-            $('wallet').textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
-            $('joinBtn').disabled = false;
-            $('addNetworkBtn').style.display = 'none';
-            
-            // Show entry fee
-            try {
-              const fee = await getEntryFee();
-              const feeEth = ethers.formatEther(fee);
-              $('status').textContent = `Entry fee: ${feeEth} STT`;
-            } catch (e) {
-              console.log('Could not get entry fee:', e);
+      // Wait for DOM to be loaded before setting up event handlers
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, setting up event handlers...');
+        console.log('MetaMask available:', !!window.ethereum);
+        console.log('Ethers available:', !!window.ethers);
+        
+        $('connectBtn').onclick = async () => {
+          console.log('Connect button clicked');
+          try {
+            const addr = await connectWallet();
+            if (addr) {
+              $('wallet').textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+              $('joinBtn').disabled = false;
+              $('addNetworkBtn').style.display = 'none';
+              
+              // Show entry fee
+              try {
+                const fee = await getEntryFee();
+                const feeEth = ethers.formatEther(fee);
+                $('status').textContent = `Entry fee: ${feeEth} STT`;
+              } catch (e) {
+                console.log('Could not get entry fee:', e);
+              }
             }
+          } catch (e) {
+            console.error('Failed to connect wallet:', e);
+            $('wallet').textContent = 'Connection failed';
+            $('addNetworkBtn').style.display = 'inline-block';
+            $('status').textContent = 'Please add Somnia Testnet to MetaMask first';
           }
-        } catch (e) {
-          console.error('Failed to connect wallet:', e);
-          $('wallet').textContent = 'Connection failed';
-          $('addNetworkBtn').style.display = 'inline-block';
-          $('status').textContent = 'Please add Somnia Testnet to MetaMask first';
-        }
-      };
+        };
 
-      $('addNetworkBtn').onclick = async () => {
-        try {
-          await window.ethereum.request({ 
-            method: 'wallet_addEthereumChain', 
-            params: [{
-              chainId: SOMNIA.id,
-              chainName: 'Somnia Testnet',
-              nativeCurrency: { 
-                name: 'Somnia', 
-                symbol: 'STT', 
-                decimals: 18 
-              },
-              rpcUrls: [SOMNIA.rpc],
-              blockExplorerUrls: [SOMNIA.exp]
-            }]
-          });
-          $('status').textContent = 'Network added! Now try connecting again.';
-          $('addNetworkBtn').style.display = 'none';
-        } catch (e) {
-          console.error('Failed to add network:', e);
-          $('status').textContent = 'Failed to add network: ' + e.message;
-        }
-      };
+        $('addNetworkBtn').onclick = async () => {
+          console.log('Add network button clicked');
+          try {
+            await window.ethereum.request({ 
+              method: 'wallet_addEthereumChain', 
+              params: [{
+                chainId: SOMNIA.id,
+                chainName: 'Somnia Testnet',
+                nativeCurrency: { 
+                  name: 'Somnia', 
+                  symbol: 'STT', 
+                  decimals: 18 
+                },
+                rpcUrls: [SOMNIA.rpc],
+                blockExplorerUrls: [SOMNIA.exp]
+              }]
+            });
+            $('status').textContent = 'Network added! Now try connecting again.';
+            $('addNetworkBtn').style.display = 'none';
+          } catch (e) {
+            console.error('Failed to add network:', e);
+            $('status').textContent = 'Failed to add network: ' + e.message;
+          }
+        };
 
-      $('joinBtn').onclick = async () => {
-        try {
-          const code = $('matchCode').value || 'DEMO123';
-          $('status').textContent = 'Joining match...';
-          const txHash = await joinMatch(code);
-          $('status').innerHTML = `✅ Joined! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
-        } catch (e) {
-          console.error('Failed to join match:', e);
-          $('status').textContent = '❌ Join failed: ' + e.message;
-        }
-      };
+        $('joinBtn').onclick = async () => {
+          console.log('Join button clicked');
+          try {
+            const code = $('matchCode').value || 'DEMO123';
+            $('status').textContent = 'Joining match...';
+            const txHash = await joinMatch(code);
+            $('status').innerHTML = `✅ Joined! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
+          } catch (e) {
+            console.error('Failed to join match:', e);
+            $('status').textContent = '❌ Join failed: ' + e.message;
+          }
+        };
+
+        console.log('Event handlers set up successfully');
+      });
 
       // Expose helpers for the game code to call at game over
       window.__somnia__ = {
