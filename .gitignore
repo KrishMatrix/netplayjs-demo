@@ -1,3 +1,4 @@
-node_modules/
+node_modules/ # Updated timestamp
 dist/
 .DS_Store
+node_modules

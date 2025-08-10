@@ -16,7 +16,7 @@ const ENTRIES = {};
 const PLUGINS = [];
 
 const GITHUB_ROOT =
-  "https://github.com/KrishMatrix/netplayjs-demo";
+  "https://github.com/KrishMatrix/netplayjs-demo"; // Enhanced with background music
 
 for (let example of EXAMPLES) {
   ENTRIES[example.chunkName] = example.entry;

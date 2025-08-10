@@ -16,6 +16,7 @@ const PADDLE_MOVE_SPEED = 300;
 const BALL_MOVE_SPEED = 300;
 const MATCH_MILLIS = 100000; // 100 seconds
 const MATCH_POINTS = 5;
+const GAME_VERSION = "1.1.0"; // Enhanced version with music
 
 /** Clamps a value between min and max. */
 function clamp(value: number, min: number, max: number): number {

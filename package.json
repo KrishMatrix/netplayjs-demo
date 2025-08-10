@@ -13,5 +13,6 @@
     },
     "dependencies": {
         "netplayjs": "^0.4.1"
-    }
+    },
+    "_updated": "2024-08-11"
 }

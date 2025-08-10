@@ -167,7 +167,7 @@
         display: block;
         width: 20px;
         filter: brightness(0) invert(1);
-      }</style><script defer="defer" src="../somnia-pong.js"></script></head><body><div id="wallet-ui"><div id="wallet">Not connected</div><button id="connectBtn">Connect Wallet</button> <button id="addNetworkBtn" style="display: none;">Add Somnia Network</button> <input id="matchCode" placeholder="Match code (e.g. ABC123)" style="flex: 1;"> <button id="joinBtn" disabled="disabled">Join Match</button><div id="status"></div></div><script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script><audio id="connectSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><audio id="disconnectSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><audio id="clickSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><audio id="successSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><script>// Web3 functionality
+      }</style><script defer="defer" src="../somnia-pong.js"></script></head><body><div id="wallet-ui"><div id="wallet">Not connected</div><button id="connectBtn">Connect Wallet</button> <button id="addNetworkBtn" style="display: none;">Add Somnia Network</button> <input id="matchCode" placeholder="Match code (e.g. ABC123)" style="flex: 1;"> <button id="joinBtn" disabled="disabled">Join Match</button><div id="status"></div></div><script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script><audio id="backgroundMusic" loop preload="auto"><source src="./files/game-music-player-console-8bit-background-intro-theme-297305.mp3" type="audio/mpeg"></audio><audio id="connectSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><audio id="disconnectSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><audio id="clickSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><audio id="successSound" preload="auto"><source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"></audio><script>// Web3 functionality
       const SOMNIA = { 
         id: '0xC4B8', // Chain ID 50312 in hex
         idDecimal: '50312', // Chain ID in decimal
@@ -552,11 +552,64 @@
 
       const $ = (id) => document.getElementById(id);
       
+      // Background music control
+      let backgroundMusic = null;
+      let musicStarted = false;
+
+      // Function to start background music
+      function startBackgroundMusic() {
+        if (!musicStarted) {
+          backgroundMusic = document.getElementById('backgroundMusic');
+          if (backgroundMusic) {
+            backgroundMusic.volume = 0.3; // Set volume to 30%
+            backgroundMusic.play().then(() => {
+              console.log('🎵 Background music started');
+              musicStarted = true;
+            }).catch(e => {
+              console.log('Background music autoplay blocked:', e);
+              // Add a click-to-play button if autoplay is blocked
+              addMusicPlayButton();
+            });
+          }
+        }
+      }
+
+      // Function to add music play button if autoplay is blocked
+      function addMusicPlayButton() {
+        const musicBtn = document.createElement('button');
+        musicBtn.textContent = '🎵 Play Music';
+        musicBtn.style.cssText = `
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          padding: 8px 16px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-family: 'Orbitron', monospace;
+          font-size: 12px;
+          z-index: 1001;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        `;
+        musicBtn.onclick = () => {
+          if (backgroundMusic) {
+            backgroundMusic.play();
+            musicBtn.remove();
+          }
+        };
+        document.body.appendChild(musicBtn);
+      }
+
       // Wait for DOM to be loaded before setting up event handlers
       document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM loaded, setting up event handlers...');
         console.log('MetaMask available:', !!window.ethereum);
         console.log('Ethers available:', !!window.ethers);
+        
+        // Start background music after a short delay
+        setTimeout(startBackgroundMusic, 1000);
         
         $('connectBtn').onclick = async () => {
           console.log('Connect button clicked');
