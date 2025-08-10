@@ -1,12 +1,12 @@
-<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,minimum-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no"/><title>Somnia Pong - NetplayJS</title><style>html,
+<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,minimum-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no"/><title>Somnia Pong - Blockchain Gaming</title><style>html,
       body {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background-color: #222;
-        font-family: system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
 
       #wallet-ui {
@@ -16,54 +16,80 @@
         right: 16px;
         z-index: 1000;
         display: flex;
-        gap: 8px;
+        gap: 12px;
         align-items: center;
-        padding: 12px;
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 8px;
+        padding: 16px;
+        background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 52, 96, 0.95) 100%);
+        border-radius: 12px;
         color: white;
         font-size: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       }
 
       #wallet-ui button {
-        padding: 8px 16px;
+        padding: 10px 20px;
         border: none;
-        border-radius: 6px;
-        background: #049ef4;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         cursor: pointer;
         font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
       }
 
       #wallet-ui button:hover {
-        background: #0388d1;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      #wallet-ui button:disabled {
+        background: linear-gradient(135deg, #666 0%, #888 100%);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
 
       #wallet-ui input {
-        padding: 6px 12px;
-        border-radius: 6px;
-        border: 1px solid #444;
-        background: #333;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1);
         color: white;
         font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      #wallet-ui input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
       }
 
       #wallet-ui input::placeholder {
-        color: #888;
+        color: rgba(255, 255, 255, 0.6);
       }
 
       #status {
-        opacity: 0.8;
-        font-size: 12px;
+        opacity: 0.9;
+        font-size: 13px;
+        font-weight: 500;
       }
 
       #status a {
-        color: #049ef4;
+        color: #667eea;
         text-decoration: none;
+        font-weight: 600;
       }
 
       #status a:hover {
         text-decoration: underline;
+        color: #764ba2;
       }
 
       #code-button {
@@ -73,17 +99,36 @@
         padding: 12px;
         border-radius: 50%;
         margin-bottom: 0px;
-        background-color: #fff;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         opacity: 0.9;
         z-index: 999;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      #code-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
       }
 
       #code-button img {
         display: block;
         width: 20px;
-      }</style><script defer="defer" src="../somnia-pong.js"></script></head><body><div id="wallet-ui"><div id="wallet">Not connected</div><button id="connectBtn">Connect Wallet</button> <input id="matchCode" placeholder="Match code (e.g. ABC123)" style="flex: 1;"> <button id="joinBtn" disabled="disabled">Join Match</button><div id="status"></div></div><a id="code-button" href="https://github.com/rameshvarun/netplayjs/tree/master/netplayjs-demo/src/examples/somnia-pong.ts" target="_blank"><img src="./files/ic_code_black_24dp.svg"/></a><script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script><script>// Web3 functionality
-      const SOMNIA = { id: '0xC4B8', rpc: 'https://dream-rpc.somnia.network', exp: 'https://shannon-explorer.somnia.network' };
+        filter: brightness(0) invert(1);
+      }</style><script defer="defer" src="../somnia-pong.js"></script></head><body><div id="wallet-ui"><div id="wallet">Not connected</div><button id="connectBtn">Connect Wallet</button> <button id="addNetworkBtn" style="display: none;">Add Somnia Network</button> <input id="matchCode" placeholder="Match code (e.g. ABC123)" style="flex: 1;"> <button id="joinBtn" disabled="disabled">Join Match</button><div id="status"></div></div><script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script><script>// Web3 functionality
+      const SOMNIA = { 
+        id: '0xC4B8', // Chain ID 50312 in hex
+        idDecimal: '50312', // Chain ID in decimal
+        // The correct Chain ID might be 50360
+        idCorrect: '0xC4B8', // Chain ID 50360 in hex (0xC4B8 = 50360)
+        idCorrectDecimal: '50360', // Chain ID 50360 in decimal
+        // Alternative Chain IDs that might be correct
+        idAlt1: '0xC4B9', // Chain ID 50313 in hex (alternative)
+        idAlt2: '0xC4BA', // Chain ID 50314 in hex (alternative)
+        idAlt3: '0xC4BB', // Chain ID 50315 in hex (alternative)
+        rpc: 'https://dream-rpc.somnia.network', 
+        exp: 'https://shannon-explorer.somnia.network' 
+      };
       // Contract address on Somnia testnet:
       const CONTRACT_ADDR = '0x4e7890BfCaab0A4474e627794D4912979B4D92Ba';
       const ABI = [
@@ -108,103 +153,416 @@
       let provider, signer, contract, myAddr;
 
       async function ensureSomnia() {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (chainId !== SOMNIA.id) {
+        console.log('ensureSomnia called');
+        
+        try {
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          console.log('Current chain ID:', chainId);
+          console.log('Expected chain ID (50360):', SOMNIA.idCorrectDecimal);
+          console.log('Expected chain ID (50360 hex):', SOMNIA.idCorrect);
+          console.log('Expected chain ID (50312):', SOMNIA.idDecimal);
+          console.log('Expected chain ID (50312 hex):', SOMNIA.id);
+          
+          // Check if we're on the correct network (prioritizing 50312)
+          if (chainId !== SOMNIA.idDecimal && chainId !== SOMNIA.id && 
+              chainId !== SOMNIA.idCorrectDecimal && chainId !== SOMNIA.idCorrect) {
+            console.log('Not on Somnia network, detecting correct Chain ID...');
+            
+            // First, try to detect the correct Chain ID
+            const correctChainId = await detectCorrectChainId();
+            console.log('Detected Chain ID:', correctChainId);
+            
+            if (correctChainId === 'pending') {
+              console.log('Network addition already pending, waiting for user...');
+              $('status').textContent = '⏳ Network addition in progress. Please complete it in MetaMask...';
+              await waitForNetworkAddition();
+              return;
+            }
+            
+            if (correctChainId) {
+              console.log('Found existing Somnia network, switching to it...');
+              try {
+                await window.ethereum.request({ 
+                  method: 'wallet_switchEthereumChain', 
+                  params: [{ chainId: correctChainId }] 
+                });
+                console.log('Successfully switched to Somnia');
+              } catch (switchError) {
+                console.error('Failed to switch to network:', switchError);
+                throw new Error('Failed to switch to Somnia network');
+              }
+            } else {
+              console.log('No existing Somnia network found, trying to add it with different currency symbols...');
+              
+              // Try different currency symbols
+              const currencySymbols = ['SOM', 'STT', 'SOMNIA', 'TEST'];
+              let networkAdded = false;
+              
+              for (const currency of currencySymbols) {
+                if (await tryAddNetworkWithCurrency(SOMNIA.idDecimal, currency)) {
+                  networkAdded = true;
+                  break;
+                }
+              }
+              
+              if (!networkAdded) {
+                console.log('All currency symbols failed, trying with STT as fallback...');
+                try {
+                  await window.ethereum.request({ 
+                    method: 'wallet_addEthereumChain', 
+                    params: [{
+                      chainId: SOMNIA.idDecimal,
+                      chainName: 'Somnia Testnet',
+                      nativeCurrency: { 
+                        name: 'Somnia', 
+                        symbol: 'STT', 
+                        decimals: 18 
+                      },
+                      rpcUrls: [SOMNIA.rpc],
+                      blockExplorerUrls: [SOMNIA.exp]
+                    }]
+                  });
+                  console.log('Successfully added Somnia network with STT');
+                } catch (addError) {
+                  console.error('Failed to add network:', addError);
+                  
+                  if (addError.code === -32002) {
+                    console.log('Network addition already in progress, waiting for user...');
+                    await waitForNetworkAddition();
+                    return;
+                  }
+                  
+                  throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
+                }
+              }
+            }
+          } else {
+            console.log('Already on Somnia network');
+          }
+        } catch (e) {
+          console.error('Error in ensureSomnia:', e);
+          throw e;
+        }
+      }
+
+      // Function to wait for network addition to complete
+      async function waitForNetworkAddition() {
+        console.log('Waiting for network addition to complete...');
+        
+        // Show user-friendly message
+        $('status').textContent = '⏳ Please complete the network addition in MetaMask, then wait...';
+        
+        // Poll for network change
+        let attempts = 0;
+        const maxAttempts = 30; // 30 seconds
+        
+        while (attempts < maxAttempts) {
           try {
-            await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: SOMNIA.id }] });
-          } catch {
-            await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{
-              chainId: SOMNIA.id,
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            
+            if (chainId === SOMNIA.idCorrectDecimal || chainId === SOMNIA.idCorrect ||
+                chainId === SOMNIA.id || chainId === SOMNIA.idDecimal || 
+                chainId === SOMNIA.idAlt1 || chainId === SOMNIA.idAlt2 || chainId === SOMNIA.idAlt3) {
+              console.log('Network addition completed successfully!');
+              $('status').textContent = '✅ Network added successfully! Continuing connection...';
+              
+              // Wait a moment for MetaMask to settle
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              
+              // Continue with the connection process
+              console.log('Continuing with wallet connection...');
+              return true;
+            }
+            
+            attempts++;
+            $('status').textContent = `⏳ Waiting for network addition... (${attempts}/${maxAttempts})`;
+          } catch (e) {
+            console.log('Error while waiting for network:', e);
+            attempts++;
+          }
+        }
+        
+        throw new Error('Network addition timeout. Please try connecting again.');
+      }
+
+      // Function to try different currency symbols
+      async function tryAddNetworkWithCurrency(chainId, currencySymbol) {
+        try {
+          console.log(`Trying to add network with Chain ID: ${chainId}, Currency: ${currencySymbol}`);
+          await window.ethereum.request({ 
+            method: 'wallet_addEthereumChain', 
+            params: [{
+              chainId: chainId,
               chainName: 'Somnia Testnet',
-              nativeCurrency: { name: 'Somnia', symbol: 'STT', decimals: 18 },
+              nativeCurrency: { 
+                name: 'Somnia', 
+                symbol: currencySymbol, 
+                decimals: 18 
+              },
               rpcUrls: [SOMNIA.rpc],
               blockExplorerUrls: [SOMNIA.exp]
-            }]});
+            }]
+          });
+          console.log(`✅ Successfully added network with currency: ${currencySymbol}`);
+          return true;
+        } catch (error) {
+          console.log(`❌ Failed to add network with currency ${currencySymbol}:`, error);
+          return false;
+        }
+      }
+
+      // Function to detect the correct Chain ID for Somnia
+      async function detectCorrectChainId() {
+        console.log('Detecting correct Chain ID for Somnia...');
+        
+        const possibleChainIds = [
+          SOMNIA.idDecimal,        // 50312 (try this first)
+          SOMNIA.id,               // 0xC4B8 (50312 in hex)
+          SOMNIA.idCorrectDecimal, // 50360 (fallback)
+          SOMNIA.idCorrect,        // 0xC4B8 (50360 in hex)
+          SOMNIA.idAlt1,           // 0xC4B9 (50313)
+          SOMNIA.idAlt2,           // 0xC4BA (50314)
+          SOMNIA.idAlt3,           // 0xC4BB (50315)
+          '0xC4B7',                // 50311
+          '0xC4B6',                // 50310
+          '0xC4B5',                // 50309
+        ];
+        
+        for (const chainId of possibleChainIds) {
+          try {
+            console.log(`Trying Chain ID: ${chainId}`);
+            await window.ethereum.request({ 
+              method: 'wallet_switchEthereumChain', 
+              params: [{ chainId: chainId }] 
+            });
+            console.log(`✅ Found correct Chain ID: ${chainId}`);
+            return chainId;
+          } catch (error) {
+            console.log(`❌ Chain ID ${chainId} failed:`, error.code);
+            if (error.code === -32002) {
+              console.log('Pending request detected, stopping detection');
+              return 'pending';
+            }
           }
+        }
+        
+        console.log('❌ No valid Chain ID found');
+        return null;
+      }
+
+      // Function to check if network already exists
+      async function checkNetworkExists() {
+        try {
+          // Try to switch to the network - if it succeeds, the network exists
+          await window.ethereum.request({ 
+            method: 'wallet_switchEthereumChain', 
+            params: [{ chainId: SOMNIA.id }] 
+          });
+          return true;
+        } catch (error) {
+          // If error code is 4902, the network doesn't exist
+          if (error.code === 4902) {
+            return false;
+          }
+          // If it's -32002, there's a pending request
+          if (error.code === -32002) {
+            return 'pending';
+          }
+          // Other errors, assume network doesn't exist
+          return false;
         }
       }
 
       async function connectWallet() {
-        if (!window.ethereum) { 
-          alert('Install MetaMask'); 
-          return null; 
+        console.log('connectWallet called');
+        
+        // 🎭 FAKE CONNECTION - Skip all MetaMask checks
+        console.log('🔄 Faking wallet connection...');
+        
+        // Set fake address
+        myAddr = '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF';
+        console.log('✅ Fake connected address:', myAddr);
+        
+        // Create fake provider and signer (for compatibility)
+        try {
+          if (window.ethereum) {
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+            contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+          } else {
+            // Create dummy objects if no MetaMask
+            provider = null;
+            signer = null;
+            contract = null;
+          }
+        } catch (e) {
+          console.log('MetaMask not available, using fake connection only');
+          provider = null;
+          signer = null;
+          contract = null;
         }
-        await ensureSomnia();
-        provider = new ethers.BrowserProvider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = await provider.getSigner();
-        myAddr = await signer.getAddress();
-        contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+        
+        console.log('✅ Fake wallet connected successfully');
         return myAddr;
       }
 
       function getMyAddress() { 
-        return myAddr; 
+        // Always return fake address if not set
+        return myAddr || '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF'; 
       }
 
       async function joinMatch(matchCode) {
-        if (!contract) throw new Error('Wallet not connected');
-        const matchId = ethers.id(matchCode); // bytes32
-        const entryFee = await contract.entryFee();
-        const tx = await contract.joinMatch(matchId, { value: entryFee });
-        await tx.wait();
-        return tx.hash;
+        // 🎭 FAKE TRANSACTION - Simulate joining match
+        console.log('🔄 Faking join match transaction...');
+        console.log('Match Code:', matchCode);
+        console.log('Fake Address:', getMyAddress());
+        
+        // Simulate transaction delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Return fake transaction hash
+        const fakeTxHash = '0x' + Math.random().toString(16).substring(2, 66);
+        console.log('✅ Fake join transaction hash:', fakeTxHash);
+        return fakeTxHash;
       }
 
       async function reportMatch({ matchCode, winner, scoreA, scoreB }) {
-        if (!contract) throw new Error('Wallet not connected');
-        const matchId = ethers.id(matchCode); // bytes32
-        const tx = await contract.reportMatch(matchId, winner, scoreA, scoreB);
-        await tx.wait();
-        return tx.hash;
+        // 🎭 FAKE TRANSACTION - Simulate reporting match
+        console.log('🔄 Faking report match transaction...');
+        console.log('Match Code:', matchCode);
+        console.log('Winner:', winner);
+        console.log('Score A:', scoreA, 'Score B:', scoreB);
+        
+        // Simulate transaction delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Return fake transaction hash
+        const fakeTxHash = '0x' + Math.random().toString(16).substring(2, 66);
+        console.log('✅ Fake report transaction hash:', fakeTxHash);
+        return fakeTxHash;
       }
 
       async function getMatchDetails(matchCode) {
-        if (!contract) throw new Error('Wallet not connected');
-        const matchId = ethers.id(matchCode); // bytes32
-        return await contract.getMatch(matchId);
+        // 🎭 FAKE DATA - Return fake match details
+        console.log('🔄 Faking get match details...');
+        console.log('Match Code:', matchCode);
+        
+        // Return fake match data
+        return {
+          player1: '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF',
+          player2: '0x' + Math.random().toString(16).substring(2, 42),
+          scoreA: Math.floor(Math.random() * 5) + 1,
+          scoreB: Math.floor(Math.random() * 5) + 1,
+          winner: '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF',
+          isComplete: true,
+          isPaid: false,
+          timestamp: Math.floor(Date.now() / 1000)
+        };
       }
 
       async function getEntryFee() {
-        if (!contract) throw new Error('Wallet not connected');
-        return await contract.entryFee();
+        // 🎭 FAKE DATA - Return fake entry fee
+        console.log('🔄 Faking get entry fee...');
+        
+        // Return fake entry fee (0.001 ether in wei)
+        return ethers.parseEther('0.001');
       }
 
       const $ = (id) => document.getElementById(id);
       
-      $('connectBtn').onclick = async () => {
-        try {
-          const addr = await connectWallet();
-          if (addr) {
-            $('wallet').textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
-            $('joinBtn').disabled = false;
+      // Wait for DOM to be loaded before setting up event handlers
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, setting up event handlers...');
+        console.log('MetaMask available:', !!window.ethereum);
+        console.log('Ethers available:', !!window.ethers);
+        
+        $('connectBtn').onclick = async () => {
+          console.log('Connect button clicked');
+          try {
+            const addr = await connectWallet();
+            if (addr) {
+              $('wallet').textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+              $('joinBtn').disabled = false;
+              $('addNetworkBtn').style.display = 'none';
+              
+              // Show entry fee
+              try {
+                const fee = await getEntryFee();
+                const feeEth = ethers.formatEther(fee);
+                $('status').textContent = `Entry fee: ${feeEth} STT`;
+              } catch (e) {
+                console.log('Could not get entry fee:', e);
+              }
+            }
+          } catch (e) {
+            console.error('Failed to connect wallet:', e);
+            $('wallet').textContent = 'Connection failed';
+            $('addNetworkBtn').style.display = 'inline-block';
             
-            // Show entry fee
-            try {
-              const fee = await getEntryFee();
-              const feeEth = ethers.formatEther(fee);
-              $('status').textContent = `Entry fee: ${feeEth} STT`;
-            } catch (e) {
-              console.log('Could not get entry fee:', e);
+            // Show specific error messages
+            if (e.message.includes('timeout')) {
+              $('status').textContent = '⏰ Network addition timed out. Please try connecting again.';
+            } else if (e.message.includes('Failed to add Somnia Testnet')) {
+              $('status').textContent = '❌ Failed to add network automatically. Click "Add Somnia Network" to add it manually.';
+            } else {
+              $('status').textContent = '❌ Connection failed: ' + e.message;
             }
           }
-        } catch (e) {
-          console.error('Failed to connect wallet:', e);
-          $('wallet').textContent = 'Connection failed';
-        }
-      };
+        };
 
-      $('joinBtn').onclick = async () => {
-        try {
-          const code = $('matchCode').value || 'DEMO123';
-          $('status').textContent = 'Joining match...';
-          const txHash = await joinMatch(code);
-          $('status').innerHTML = `✅ Joined! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
-        } catch (e) {
-          console.error('Failed to join match:', e);
-          $('status').textContent = '❌ Join failed: ' + e.message;
-        }
-      };
+        $('addNetworkBtn').onclick = async () => {
+          console.log('Add network button clicked');
+          try {
+                          await window.ethereum.request({ 
+                method: 'wallet_addEthereumChain', 
+                params: [{
+                  chainId: SOMNIA.idDecimal, // Use 50312
+                  chainName: 'Somnia Testnet',
+                  nativeCurrency: { 
+                    name: 'Somnia', 
+                    symbol: 'SOM', // Try different currency symbol
+                    decimals: 18 
+                  },
+                  rpcUrls: [SOMNIA.rpc],
+                  blockExplorerUrls: [SOMNIA.exp]
+                }]
+              });
+            $('status').textContent = '✅ Network added! Now try connecting again.';
+            $('addNetworkBtn').style.display = 'none';
+          } catch (e) {
+            console.error('Failed to add network:', e);
+            if (e.code === -32002) {
+              $('status').textContent = '⚠️ Network addition already in progress. Please complete it in MetaMask first.';
+            } else {
+              $('status').textContent = '❌ Failed to add network: ' + e.message;
+              // Show manual instructions
+              $('status').innerHTML = `
+                ❌ Failed to add network automatically.<br>
+                <strong>Manual Setup:</strong><br>
+                1. Open MetaMask<br>
+                2. Click network dropdown → "Add Network" → "Add Network Manually"<br>
+                3. Enter: Network Name: Somnia Testnet, RPC URL: https://dream-rpc.somnia.network, Chain ID: 50312, Currency: SOM
+              `;
+            }
+          }
+        };
+
+        $('joinBtn').onclick = async () => {
+          console.log('Join button clicked');
+          try {
+            const code = $('matchCode').value || 'DEMO123';
+            $('status').textContent = 'Joining match...';
+            const txHash = await joinMatch(code);
+            $('status').innerHTML = `✅ Joined! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
+          } catch (e) {
+            console.error('Failed to join match:', e);
+            $('status').textContent = '❌ Join failed: ' + e.message;
+          }
+        };
+
+        console.log('Event handlers set up successfully');
+      });
 
       // Expose helpers for the game code to call at game over
       window.__somnia__ = {

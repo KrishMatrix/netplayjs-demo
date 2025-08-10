@@ -40,6 +40,11 @@ const EXAMPLES = [
     entry: "./src/examples/input-test.ts",
     title: "NetplayJS Input Test Example",
   },
+  {
+    chunkName: "somnia-pong",
+    entry: "./src/examples/somnia-pong.ts",
+    title: "Somnia Pong - Blockchain Gaming",
+  },
 ];
 
 const ENTRIES = {};
@@ -50,9 +55,13 @@ const GITHUB_ROOT =
 
 for (let example of EXAMPLES) {
   ENTRIES[example.chunkName] = example.entry;
+  
+  // Use custom template for somnia-pong
+  const template = example.chunkName === "somnia-pong" ? "./src/somnia-pong.html" : "./src/example.html";
+  
   PLUGINS.push(
     new HtmlWebpackPlugin({
-      template: "./src/example.html",
+      template: template,
       filename: example.chunkName + "/index.html",
       chunks: [example.chunkName],
       templateParameters: {
