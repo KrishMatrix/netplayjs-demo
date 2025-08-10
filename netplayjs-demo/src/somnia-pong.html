@@ -168,7 +168,10 @@
               // Check if it's a pending request error
               if (switchError.code === -32002) {
                 console.log('Network add request already pending, waiting for user...');
-                throw new Error('Please complete the network addition in MetaMask first, then try again.');
+                // Wait for user to complete the network addition
+                await waitForNetworkAddition();
+                // Continue with the connection process
+                return;
               }
               
               console.log('Network not found, adding it...');
@@ -195,7 +198,11 @@
                 
                 // Check if it's a pending request error
                 if (addError.code === -32002) {
-                  throw new Error('Network addition already in progress. Please complete it in MetaMask first.');
+                  console.log('Network addition already in progress, waiting for user...');
+                  // Wait for user to complete the network addition
+                  await waitForNetworkAddition();
+                  // Continue with the connection process
+                  return;
                 }
                 
                 throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
@@ -208,6 +215,45 @@
           console.error('Error in ensureSomnia:', e);
           throw e;
         }
+      }
+
+      // Function to wait for network addition to complete
+      async function waitForNetworkAddition() {
+        console.log('Waiting for network addition to complete...');
+        
+        // Show user-friendly message
+        $('status').textContent = '⏳ Please complete the network addition in MetaMask, then wait...';
+        
+        // Poll for network change
+        let attempts = 0;
+        const maxAttempts = 30; // 30 seconds
+        
+        while (attempts < maxAttempts) {
+          try {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            
+            if (chainId === SOMNIA.id || chainId === SOMNIA.idDecimal) {
+              console.log('Network addition completed successfully!');
+              $('status').textContent = '✅ Network added successfully! Continuing connection...';
+              
+              // Wait a moment for MetaMask to settle
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              
+              // Continue with the connection process
+              console.log('Continuing with wallet connection...');
+              return true;
+            }
+            
+            attempts++;
+            $('status').textContent = `⏳ Waiting for network addition... (${attempts}/${maxAttempts})`;
+          } catch (e) {
+            console.log('Error while waiting for network:', e);
+            attempts++;
+          }
+        }
+        
+        throw new Error('Network addition timeout. Please try connecting again.');
       }
 
       async function connectWallet() {
@@ -341,8 +387,8 @@
             $('addNetworkBtn').style.display = 'inline-block';
             
             // Show specific error messages
-            if (e.message.includes('already in progress') || e.message.includes('complete the network addition')) {
-              $('status').textContent = '⚠️ Network addition in progress. Please complete it in MetaMask first, then try again.';
+            if (e.message.includes('timeout')) {
+              $('status').textContent = '⏰ Network addition timed out. Please try connecting again.';
             } else if (e.message.includes('Failed to add Somnia Testnet')) {
               $('status').textContent = '❌ Failed to add network automatically. Click "Add Somnia Network" to add it manually.';
             } else {
