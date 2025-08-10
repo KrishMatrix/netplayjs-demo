@@ -153,29 +153,33 @@
           
           // Check if we're on the correct network (either hex or decimal format)
           if (chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
-            console.log('Not on Somnia network, attempting to switch...');
-            try {
-              // Try to switch to the network
-              console.log('Attempting to switch to Somnia...');
-              await window.ethereum.request({ 
-                method: 'wallet_switchEthereumChain', 
-                params: [{ chainId: SOMNIA.id }] 
-              });
-              console.log('Successfully switched to Somnia');
-            } catch (switchError) {
-              console.log('Switch failed, error:', switchError);
-              
-              // Check if it's a pending request error
-              if (switchError.code === -32002) {
-                console.log('Network add request already pending, waiting for user...');
-                // Wait for user to complete the network addition
-                await waitForNetworkAddition();
-                // Continue with the connection process
-                return;
+            console.log('Not on Somnia network, checking if it exists...');
+            
+            // First, check if the network already exists
+            const networkStatus = await checkNetworkExists();
+            console.log('Network status:', networkStatus);
+            
+            if (networkStatus === 'pending') {
+              console.log('Network addition already pending, waiting for user...');
+              $('status').textContent = '⏳ Network addition in progress. Please complete it in MetaMask...';
+              await waitForNetworkAddition();
+              return;
+            }
+            
+            if (networkStatus === true) {
+              console.log('Network exists, switching to it...');
+              try {
+                await window.ethereum.request({ 
+                  method: 'wallet_switchEthereumChain', 
+                  params: [{ chainId: SOMNIA.id }] 
+                });
+                console.log('Successfully switched to Somnia');
+              } catch (switchError) {
+                console.error('Failed to switch to network:', switchError);
+                throw new Error('Failed to switch to Somnia network');
               }
-              
-              console.log('Network not found, adding it...');
-              // If the network doesn't exist, add it
+            } else {
+              console.log('Network does not exist, adding it...');
               try {
                 console.log('Adding Somnia network...');
                 await window.ethereum.request({ 
@@ -196,12 +200,9 @@
               } catch (addError) {
                 console.error('Failed to add network:', addError);
                 
-                // Check if it's a pending request error
                 if (addError.code === -32002) {
                   console.log('Network addition already in progress, waiting for user...');
-                  // Wait for user to complete the network addition
                   await waitForNetworkAddition();
-                  // Continue with the connection process
                   return;
                 }
                 
@@ -254,6 +255,29 @@
         }
         
         throw new Error('Network addition timeout. Please try connecting again.');
+      }
+
+      // Function to check if network already exists
+      async function checkNetworkExists() {
+        try {
+          // Try to switch to the network - if it succeeds, the network exists
+          await window.ethereum.request({ 
+            method: 'wallet_switchEthereumChain', 
+            params: [{ chainId: SOMNIA.id }] 
+          });
+          return true;
+        } catch (error) {
+          // If error code is 4902, the network doesn't exist
+          if (error.code === 4902) {
+            return false;
+          }
+          // If it's -32002, there's a pending request
+          if (error.code === -32002) {
+            return 'pending';
+          }
+          // Other errors, assume network doesn't exist
+          return false;
+        }
       }
 
       async function connectWallet() {
@@ -414,11 +438,23 @@
                 blockExplorerUrls: [SOMNIA.exp]
               }]
             });
-            $('status').textContent = 'Network added! Now try connecting again.';
+            $('status').textContent = '✅ Network added! Now try connecting again.';
             $('addNetworkBtn').style.display = 'none';
           } catch (e) {
             console.error('Failed to add network:', e);
-            $('status').textContent = 'Failed to add network: ' + e.message;
+            if (e.code === -32002) {
+              $('status').textContent = '⚠️ Network addition already in progress. Please complete it in MetaMask first.';
+            } else {
+              $('status').textContent = '❌ Failed to add network: ' + e.message;
+              // Show manual instructions
+              $('status').innerHTML = `
+                ❌ Failed to add network automatically.<br>
+                <strong>Manual Setup:</strong><br>
+                1. Open MetaMask<br>
+                2. Click network dropdown → "Add Network" → "Add Network Manually"<br>
+                3. Enter: Network Name: Somnia Testnet, RPC URL: https://dream-rpc.somnia.network, Chain ID: 50312, Currency: STT
+              `;
+            }
           }
         };
 
