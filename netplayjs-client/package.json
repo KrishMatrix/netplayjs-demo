@@ -1,9 +1,9 @@
 {
   "name": "netplayjs",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "main": "dist/netplay.js",
   "types": "./dist/types/index.d.ts",
-  "description": "A framework for making P2P multiplayer games in Javascript.",
+  "description": "A framework for making P2P multiplayer games in Javascript with blockchain integration.",
   "repository": {
     "type": "git",
     "url": "https://github.com/rameshvarun/netplayjs.git"
@@ -14,7 +14,10 @@
     "typescript",
     "p2p",
     "javascript",
-    "rtc"
+    "rtc",
+    "blockchain",
+    "somnia",
+    "gaming"
   ],
   "homepage": "https://rameshvarun.github.io/netplayjs/",
   "dependencies": {
@@ -39,7 +42,8 @@
     "check-format": "prettier-check src/**/*.ts",
     "test": "jest",
     "typegen": "tsc --declaration --emitDeclarationOnly",
-    "prepublish": "cp ../README.md . && cp -r ../media ."
+    "prepublish": "cp ../README.md .",
+    "_updated": "2024-08-11"
   },
   "license": "ISC",
   "devDependencies": {

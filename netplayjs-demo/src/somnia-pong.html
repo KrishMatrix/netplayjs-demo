@@ -197,8 +197,9 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script>
     
     <!-- Background Music -->
-    <audio id="backgroundMusic" loop preload="auto">
+    <audio id="backgroundMusic" loop preload="auto" autoplay>
       <source src="./files/game-music-player-console-8bit-background-intro-theme-297305.mp3" type="audio/mpeg">
+      <source src="../game-music-player-console-8bit-background-intro-theme-297305.mp3" type="audio/mpeg">
     </audio>
     
     <!-- Sound Effects -->
@@ -610,14 +611,28 @@
         if (!musicStarted) {
           backgroundMusic = document.getElementById('backgroundMusic');
           if (backgroundMusic) {
-            backgroundMusic.volume = 0.2; // Set volume to 20%
+            backgroundMusic.volume = 0.3; // Set volume to 30%
             backgroundMusic.loop = true; // Ensure looping
+            backgroundMusic.currentTime = 0; // Start from beginning
+            
+            // Ensure the audio element has the correct attributes
+            backgroundMusic.setAttribute('loop', 'true');
+            backgroundMusic.setAttribute('autoplay', 'true');
             
             // Try multiple approaches to start music without permission
             const startMusic = () => {
+              // Force the audio to load
+              backgroundMusic.load();
+              
               backgroundMusic.play().then(() => {
                 console.log('🎵 Background music started successfully');
                 musicStarted = true;
+                
+                // Double-check loop is enabled
+                if (!backgroundMusic.loop) {
+                  backgroundMusic.loop = true;
+                  console.log('🎵 Loop enabled for background music');
+                }
               }).catch(e => {
                 console.log('Background music autoplay blocked, trying alternative method:', e);
                 // Try with user interaction simulation
@@ -640,6 +655,15 @@
                 startMusic();
               }
             }, { once: true });
+            
+            // Add event listener for when music ends to restart it
+            backgroundMusic.addEventListener('ended', () => {
+              console.log('🎵 Music ended, restarting...');
+              if (musicStarted) {
+                backgroundMusic.currentTime = 0;
+                backgroundMusic.play().catch(e => console.log('Restart failed:', e));
+              }
+            });
           }
         }
       }
@@ -700,8 +724,15 @@
         `;
         musicBtn.onclick = () => {
           if (backgroundMusic) {
-            backgroundMusic.play();
-            musicBtn.remove();
+            backgroundMusic.loop = true;
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().then(() => {
+              console.log('🎵 Background music started via button');
+              musicStarted = true;
+              musicBtn.remove();
+            }).catch(e => {
+              console.log('Button play failed:', e);
+            });
           }
         };
         document.body.appendChild(musicBtn);
