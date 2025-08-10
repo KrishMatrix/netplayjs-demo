@@ -116,6 +116,9 @@
       const SOMNIA = { 
         id: '0xC4B8', // Chain ID 50312 in hex
         idDecimal: '50312', // Chain ID in decimal
+        // The correct Chain ID might be 50360
+        idCorrect: '0xC4B8', // Chain ID 50360 in hex (0xC4B8 = 50360)
+        idCorrectDecimal: '50360', // Chain ID 50360 in decimal
         // Alternative Chain IDs that might be correct
         idAlt1: '0xC4B9', // Chain ID 50313 in hex (alternative)
         idAlt2: '0xC4BA', // Chain ID 50314 in hex (alternative)
@@ -152,11 +155,14 @@
         try {
           const chainId = await window.ethereum.request({ method: 'eth_chainId' });
           console.log('Current chain ID:', chainId);
-          console.log('Expected chain ID (hex):', SOMNIA.id);
-          console.log('Expected chain ID (decimal):', SOMNIA.idDecimal);
+          console.log('Expected chain ID (50360):', SOMNIA.idCorrectDecimal);
+          console.log('Expected chain ID (50360 hex):', SOMNIA.idCorrect);
+          console.log('Expected chain ID (50312):', SOMNIA.idDecimal);
+          console.log('Expected chain ID (50312 hex):', SOMNIA.id);
           
-          // Check if we're on the correct network (either hex or decimal format)
-          if (chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
+          // Check if we're on the correct network (prioritizing 50360)
+          if (chainId !== SOMNIA.idCorrectDecimal && chainId !== SOMNIA.idCorrect && 
+              chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
             console.log('Not on Somnia network, detecting correct Chain ID...');
             
             // First, try to detect the correct Chain ID
@@ -238,7 +244,8 @@
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
             
-            if (chainId === SOMNIA.id || chainId === SOMNIA.idDecimal || 
+            if (chainId === SOMNIA.idCorrectDecimal || chainId === SOMNIA.idCorrect ||
+                chainId === SOMNIA.id || chainId === SOMNIA.idDecimal || 
                 chainId === SOMNIA.idAlt1 || chainId === SOMNIA.idAlt2 || chainId === SOMNIA.idAlt3) {
               console.log('Network addition completed successfully!');
               $('status').textContent = '✅ Network added successfully! Continuing connection...';
@@ -267,14 +274,16 @@
         console.log('Detecting correct Chain ID for Somnia...');
         
         const possibleChainIds = [
-          SOMNIA.id,        // 0xC4B8 (50312)
-          SOMNIA.idDecimal, // 50312
-          SOMNIA.idAlt1,    // 0xC4B9 (50313)
-          SOMNIA.idAlt2,    // 0xC4BA (50314)
-          SOMNIA.idAlt3,    // 0xC4BB (50315)
-          '0xC4B7',         // 50311
-          '0xC4B6',         // 50310
-          '0xC4B5',         // 50309
+          SOMNIA.idCorrectDecimal, // 50360 (try this first)
+          SOMNIA.idCorrect,        // 0xC4B8 (50360 in hex)
+          SOMNIA.id,               // 0xC4B8 (50312)
+          SOMNIA.idDecimal,        // 50312
+          SOMNIA.idAlt1,           // 0xC4B9 (50313)
+          SOMNIA.idAlt2,           // 0xC4BA (50314)
+          SOMNIA.idAlt3,           // 0xC4BB (50315)
+          '0xC4B7',                // 50311
+          '0xC4B6',                // 50310
+          '0xC4B5',                // 50309
         ];
         
         for (const chainId of possibleChainIds) {
