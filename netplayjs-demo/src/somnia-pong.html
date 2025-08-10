@@ -159,9 +159,9 @@
           console.log('Expected chain ID (50312):', SOMNIA.idDecimal);
           console.log('Expected chain ID (50312 hex):', SOMNIA.id);
           
-          // Check if we're on the correct network (prioritizing 50360)
-          if (chainId !== SOMNIA.idCorrectDecimal && chainId !== SOMNIA.idCorrect && 
-              chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
+          // Check if we're on the correct network (prioritizing 50312)
+          if (chainId !== SOMNIA.idDecimal && chainId !== SOMNIA.id && 
+              chainId !== SOMNIA.idCorrectDecimal && chainId !== SOMNIA.idCorrect) {
             console.log('Not on Somnia network, detecting correct Chain ID...');
             
             // First, try to detect the correct Chain ID
@@ -195,7 +195,7 @@
               let networkAdded = false;
               
               for (const currency of currencySymbols) {
-                if (await tryAddNetworkWithCurrency(SOMNIA.idCorrectDecimal, currency)) {
+                if (await tryAddNetworkWithCurrency(SOMNIA.idDecimal, currency)) {
                   networkAdded = true;
                   break;
                 }
@@ -207,7 +207,7 @@
                   await window.ethereum.request({ 
                     method: 'wallet_addEthereumChain', 
                     params: [{
-                      chainId: SOMNIA.idCorrectDecimal,
+                      chainId: SOMNIA.idDecimal,
                       chainName: 'Somnia Testnet',
                       nativeCurrency: { 
                         name: 'Somnia', 
@@ -313,10 +313,10 @@
         console.log('Detecting correct Chain ID for Somnia...');
         
         const possibleChainIds = [
-          SOMNIA.idCorrectDecimal, // 50360 (try this first)
+          SOMNIA.idDecimal,        // 50312 (try this first)
+          SOMNIA.id,               // 0xC4B8 (50312 in hex)
+          SOMNIA.idCorrectDecimal, // 50360 (fallback)
           SOMNIA.idCorrect,        // 0xC4B8 (50360 in hex)
-          SOMNIA.id,               // 0xC4B8 (50312)
-          SOMNIA.idDecimal,        // 50312
           SOMNIA.idAlt1,           // 0xC4B9 (50313)
           SOMNIA.idAlt2,           // 0xC4BA (50314)
           SOMNIA.idAlt3,           // 0xC4BB (50315)
@@ -517,7 +517,7 @@
                           await window.ethereum.request({ 
                 method: 'wallet_addEthereumChain', 
                 params: [{
-                  chainId: SOMNIA.idCorrectDecimal, // Use 50360
+                  chainId: SOMNIA.idDecimal, // Use 50312
                   chainName: 'Somnia Testnet',
                   nativeCurrency: { 
                     name: 'Somnia', 
@@ -542,7 +542,7 @@
                 <strong>Manual Setup:</strong><br>
                 1. Open MetaMask<br>
                 2. Click network dropdown → "Add Network" → "Add Network Manually"<br>
-                3. Enter: Network Name: Somnia Testnet, RPC URL: https://dream-rpc.somnia.network, Chain ID: 50360, Currency: SOM
+                3. Enter: Network Name: Somnia Testnet, RPC URL: https://dream-rpc.somnia.network, Chain ID: 50312, Currency: SOM
               `;
             }
           }
