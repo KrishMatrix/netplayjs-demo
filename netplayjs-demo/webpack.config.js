@@ -6,41 +6,6 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const EXAMPLES = [
   {
-    chunkName: "pong",
-    entry: "./src/examples/pong.ts",
-    title: "NetplayJS Pong Example",
-  },
-  {
-    chunkName: "fps",
-    entry: "./src/examples/fps.ts",
-    title: "NetplayJS FPS Example",
-  },
-  {
-    chunkName: "emulator",
-    entry: "./src/examples/emulator.ts",
-    title: "NetplayJS Emulator Example",
-  },
-  {
-    chunkName: "simple",
-    entry: "./src/examples/simple.ts",
-    title: "NetplayJS Simple Game Example",
-  },
-  {
-    chunkName: "physics",
-    entry: "./src/examples/physics.ts",
-    title: "NetplayJS Physics Game Example",
-  },
-  {
-    chunkName: "local",
-    entry: "./src/examples/local.ts",
-    title: "NetplayJS Local Testing Example",
-  },
-  {
-    chunkName: "input-test",
-    entry: "./src/examples/input-test.ts",
-    title: "NetplayJS Input Test Example",
-  },
-  {
     chunkName: "somnia-pong",
     entry: "./src/examples/somnia-pong.ts",
     title: "Somnia Pong - Blockchain Gaming",

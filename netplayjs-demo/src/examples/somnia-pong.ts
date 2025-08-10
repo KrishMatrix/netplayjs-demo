@@ -207,17 +207,17 @@ export class Pong extends Game {
     ctx.resetTransform();
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw paddles.
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "black";
     ctx.fillRect(LEFT_PADDLE_X, this.leftPaddle, PADDLE_WIDTH, PADDLE_HEIGHT);
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "black";
     ctx.fillRect(RIGHT_PADDLE_X, this.rightPaddle, PADDLE_WIDTH, PADDLE_HEIGHT);
 
     // Draw ball.
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "black";
     ctx.fillRect(
       this.ballPosition[0],
       this.ballPosition[1],
@@ -228,6 +228,7 @@ export class Pong extends Game {
     // Draw scores.
     ctx.font = "40px Arial";
     ctx.textAlign = "center";
+    ctx.fillStyle = "black";
     ctx.fillText(
       this.leftScore.toString(),
       PONG_WIDTH * 0.3,
@@ -245,7 +246,7 @@ export class Pong extends Game {
       const timeRemaining = Math.max(0, (MATCH_MILLIS - timeElapsed) / 1000);
       
       ctx.font = "20px Arial";
-      ctx.fillStyle = timeRemaining < 10 ? "red" : "white";
+      ctx.fillStyle = timeRemaining < 10 ? "red" : "black";
       ctx.fillText(
         `Time: ${timeRemaining.toFixed(1)}s`,
         PONG_WIDTH / 2,
