@@ -116,6 +116,10 @@
       const SOMNIA = { 
         id: '0xC4B8', // Chain ID 50312 in hex
         idDecimal: '50312', // Chain ID in decimal
+        // Alternative Chain IDs that might be correct
+        idAlt1: '0xC4B9', // Chain ID 50313 in hex (alternative)
+        idAlt2: '0xC4BA', // Chain ID 50314 in hex (alternative)
+        idAlt3: '0xC4BB', // Chain ID 50315 in hex (alternative)
         rpc: 'https://dream-rpc.somnia.network', 
         exp: 'https://shannon-explorer.somnia.network' 
       };
@@ -153,25 +157,25 @@
           
           // Check if we're on the correct network (either hex or decimal format)
           if (chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
-            console.log('Not on Somnia network, checking if it exists...');
+            console.log('Not on Somnia network, detecting correct Chain ID...');
             
-            // First, check if the network already exists
-            const networkStatus = await checkNetworkExists();
-            console.log('Network status:', networkStatus);
+            // First, try to detect the correct Chain ID
+            const correctChainId = await detectCorrectChainId();
+            console.log('Detected Chain ID:', correctChainId);
             
-            if (networkStatus === 'pending') {
+            if (correctChainId === 'pending') {
               console.log('Network addition already pending, waiting for user...');
               $('status').textContent = '⏳ Network addition in progress. Please complete it in MetaMask...';
               await waitForNetworkAddition();
               return;
             }
             
-            if (networkStatus === true) {
-              console.log('Network exists, switching to it...');
+            if (correctChainId) {
+              console.log('Found existing Somnia network, switching to it...');
               try {
                 await window.ethereum.request({ 
                   method: 'wallet_switchEthereumChain', 
-                  params: [{ chainId: SOMNIA.id }] 
+                  params: [{ chainId: correctChainId }] 
                 });
                 console.log('Successfully switched to Somnia');
               } catch (switchError) {
@@ -179,7 +183,7 @@
                 throw new Error('Failed to switch to Somnia network');
               }
             } else {
-              console.log('Network does not exist, adding it...');
+              console.log('No existing Somnia network found, adding it...');
               try {
                 console.log('Adding Somnia network...');
                 await window.ethereum.request({ 
@@ -234,7 +238,8 @@
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
             
-            if (chainId === SOMNIA.id || chainId === SOMNIA.idDecimal) {
+            if (chainId === SOMNIA.id || chainId === SOMNIA.idDecimal || 
+                chainId === SOMNIA.idAlt1 || chainId === SOMNIA.idAlt2 || chainId === SOMNIA.idAlt3) {
               console.log('Network addition completed successfully!');
               $('status').textContent = '✅ Network added successfully! Continuing connection...';
               
@@ -255,6 +260,43 @@
         }
         
         throw new Error('Network addition timeout. Please try connecting again.');
+      }
+
+      // Function to detect the correct Chain ID for Somnia
+      async function detectCorrectChainId() {
+        console.log('Detecting correct Chain ID for Somnia...');
+        
+        const possibleChainIds = [
+          SOMNIA.id,        // 0xC4B8 (50312)
+          SOMNIA.idDecimal, // 50312
+          SOMNIA.idAlt1,    // 0xC4B9 (50313)
+          SOMNIA.idAlt2,    // 0xC4BA (50314)
+          SOMNIA.idAlt3,    // 0xC4BB (50315)
+          '0xC4B7',         // 50311
+          '0xC4B6',         // 50310
+          '0xC4B5',         // 50309
+        ];
+        
+        for (const chainId of possibleChainIds) {
+          try {
+            console.log(`Trying Chain ID: ${chainId}`);
+            await window.ethereum.request({ 
+              method: 'wallet_switchEthereumChain', 
+              params: [{ chainId: chainId }] 
+            });
+            console.log(`✅ Found correct Chain ID: ${chainId}`);
+            return chainId;
+          } catch (error) {
+            console.log(`❌ Chain ID ${chainId} failed:`, error.code);
+            if (error.code === -32002) {
+              console.log('Pending request detected, stopping detection');
+              return 'pending';
+            }
+          }
+        }
+        
+        console.log('❌ No valid Chain ID found');
+        return null;
       }
 
       // Function to check if network already exists
