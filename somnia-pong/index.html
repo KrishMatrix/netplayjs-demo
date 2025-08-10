@@ -1,0 +1,223 @@
+<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,minimum-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no"/><title>Somnia Pong - NetplayJS</title><style>html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #222;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+
+      #wallet-ui {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        z-index: 1000;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+      }
+
+      #wallet-ui button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background: #049ef4;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      #wallet-ui button:hover {
+        background: #0388d1;
+      }
+
+      #wallet-ui input {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid #444;
+        background: #333;
+        color: white;
+        font-size: 14px;
+      }
+
+      #wallet-ui input::placeholder {
+        color: #888;
+      }
+
+      #status {
+        opacity: 0.8;
+        font-size: 12px;
+      }
+
+      #status a {
+        color: #049ef4;
+        text-decoration: none;
+      }
+
+      #status a:hover {
+        text-decoration: underline;
+      }
+
+      #code-button {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        padding: 12px;
+        border-radius: 50%;
+        margin-bottom: 0px;
+        background-color: #fff;
+        opacity: 0.9;
+        z-index: 999;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+
+      #code-button img {
+        display: block;
+        width: 20px;
+      }</style><script defer="defer" src="../somnia-pong.js"></script></head><body><div id="wallet-ui"><div id="wallet">Not connected</div><button id="connectBtn">Connect Wallet</button> <input id="matchCode" placeholder="Match code (e.g. ABC123)" style="flex: 1;"> <button id="joinBtn" disabled="disabled">Join Match</button><div id="status"></div></div><a id="code-button" href="https://github.com/rameshvarun/netplayjs/tree/master/netplayjs-demo/src/examples/somnia-pong.ts" target="_blank"><img src="./files/ic_code_black_24dp.svg"/></a><script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script><script>// Web3 functionality
+      const SOMNIA = { id: '0xC4B8', rpc: 'https://dream-rpc.somnia.network', exp: 'https://shannon-explorer.somnia.network' };
+      // Contract address on Somnia testnet:
+      const CONTRACT_ADDR = '0x4e7890BfCaab0A4474e627794D4912979B4D92Ba';
+      const ABI = [
+        {"type":"function","name":"joinMatch","inputs":[{"name":"matchId","type":"bytes32"}],"outputs":[],"stateMutability":"payable"},
+        {"type":"function","name":"reportMatch","inputs":[
+          {"name":"matchId","type":"bytes32"},
+          {"name":"winner","type":"address"},
+          {"name":"scoreA","type":"uint8"},
+          {"name":"scoreB","type":"uint8"}],"outputs":[],"stateMutability":"nonpayable"},
+        {"type":"function","name":"getMatch","inputs":[{"name":"matchId","type":"bytes32"}],"outputs":[
+          {"name":"player1","type":"address"},
+          {"name":"player2","type":"address"},
+          {"name":"scoreA","type":"uint8"},
+          {"name":"scoreB","type":"uint8"},
+          {"name":"winner","type":"address"},
+          {"name":"isComplete","type":"bool"},
+          {"name":"isPaid","type":"bool"},
+          {"name":"timestamp","type":"uint256"}],"stateMutability":"view"},
+        {"type":"function","name":"entryFee","inputs":[],"outputs":[{"name":"","type":"uint256"}],"stateMutability":"view"}
+      ];
+
+      let provider, signer, contract, myAddr;
+
+      async function ensureSomnia() {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (chainId !== SOMNIA.id) {
+          try {
+            await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: SOMNIA.id }] });
+          } catch {
+            await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{
+              chainId: SOMNIA.id,
+              chainName: 'Somnia Testnet',
+              nativeCurrency: { name: 'Somnia', symbol: 'STT', decimals: 18 },
+              rpcUrls: [SOMNIA.rpc],
+              blockExplorerUrls: [SOMNIA.exp]
+            }]});
+          }
+        }
+      }
+
+      async function connectWallet() {
+        if (!window.ethereum) { 
+          alert('Install MetaMask'); 
+          return null; 
+        }
+        await ensureSomnia();
+        provider = new ethers.BrowserProvider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+        myAddr = await signer.getAddress();
+        contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+        return myAddr;
+      }
+
+      function getMyAddress() { 
+        return myAddr; 
+      }
+
+      async function joinMatch(matchCode) {
+        if (!contract) throw new Error('Wallet not connected');
+        const matchId = ethers.id(matchCode); // bytes32
+        const entryFee = await contract.entryFee();
+        const tx = await contract.joinMatch(matchId, { value: entryFee });
+        await tx.wait();
+        return tx.hash;
+      }
+
+      async function reportMatch({ matchCode, winner, scoreA, scoreB }) {
+        if (!contract) throw new Error('Wallet not connected');
+        const matchId = ethers.id(matchCode); // bytes32
+        const tx = await contract.reportMatch(matchId, winner, scoreA, scoreB);
+        await tx.wait();
+        return tx.hash;
+      }
+
+      async function getMatchDetails(matchCode) {
+        if (!contract) throw new Error('Wallet not connected');
+        const matchId = ethers.id(matchCode); // bytes32
+        return await contract.getMatch(matchId);
+      }
+
+      async function getEntryFee() {
+        if (!contract) throw new Error('Wallet not connected');
+        return await contract.entryFee();
+      }
+
+      const $ = (id) => document.getElementById(id);
+      
+      $('connectBtn').onclick = async () => {
+        try {
+          const addr = await connectWallet();
+          if (addr) {
+            $('wallet').textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+            $('joinBtn').disabled = false;
+            
+            // Show entry fee
+            try {
+              const fee = await getEntryFee();
+              const feeEth = ethers.formatEther(fee);
+              $('status').textContent = `Entry fee: ${feeEth} STT`;
+            } catch (e) {
+              console.log('Could not get entry fee:', e);
+            }
+          }
+        } catch (e) {
+          console.error('Failed to connect wallet:', e);
+          $('wallet').textContent = 'Connection failed';
+        }
+      };
+
+      $('joinBtn').onclick = async () => {
+        try {
+          const code = $('matchCode').value || 'DEMO123';
+          $('status').textContent = 'Joining match...';
+          const txHash = await joinMatch(code);
+          $('status').innerHTML = `✅ Joined! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
+        } catch (e) {
+          console.error('Failed to join match:', e);
+          $('status').textContent = '❌ Join failed: ' + e.message;
+        }
+      };
+
+      // Expose helpers for the game code to call at game over
+      window.__somnia__ = {
+        async submitResult({ winnerAddress, scoreA, scoreB }) {
+          try {
+            $('status').textContent = 'Submitting on-chain...';
+            const code = $('matchCode').value || 'DEMO123';
+            const txHash = await reportMatch({ matchCode: code, winner: winnerAddress, scoreA, scoreB });
+            $('status').innerHTML = `✅ Submitted! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
+          } catch (e) {
+            console.error('Submit failed:', e);
+            $('status').textContent = '❌ Submit failed: ' + e.message;
+          }
+        },
+        getMyAddress
+      };</script></body></html>
