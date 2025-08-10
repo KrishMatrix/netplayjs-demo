@@ -11,6 +11,12 @@ const EXAMPLES = [
     title: "NetplayJS Pong Example",
   },
   {
+    chunkName: "somnia-pong",
+    entry: "./src/examples/somnia-pong.ts",
+    title: "Somnia Pong - On-Chain Match Results",
+    template: "./src/somnia-pong.html",
+  },
+  {
     chunkName: "fps",
     entry: "./src/examples/fps.ts",
     title: "NetplayJS FPS Example",
@@ -52,7 +58,7 @@ for (let example of EXAMPLES) {
   ENTRIES[example.chunkName] = example.entry;
   PLUGINS.push(
     new HtmlWebpackPlugin({
-      template: "./src/example.html",
+      template: example.template || "./src/example.html",
       filename: example.chunkName + "/index.html",
       chunks: [example.chunkName],
       templateParameters: {
