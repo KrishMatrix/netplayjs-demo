@@ -143,57 +143,124 @@
       let provider, signer, contract, myAddr;
 
       async function ensureSomnia() {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        console.log('Current chain ID:', chainId);
-        console.log('Expected chain ID (hex):', SOMNIA.id);
-        console.log('Expected chain ID (decimal):', SOMNIA.idDecimal);
+        console.log('ensureSomnia called');
         
-        // Check if we're on the correct network (either hex or decimal format)
-        if (chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
-          console.log('Switching to Somnia Testnet...');
-          try {
-            // Try to switch to the network
-            await window.ethereum.request({ 
-              method: 'wallet_switchEthereumChain', 
-              params: [{ chainId: SOMNIA.id }] 
-            });
-          } catch (switchError) {
-            console.log('Network not found, adding it...');
-            // If the network doesn't exist, add it
+        try {
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          console.log('Current chain ID:', chainId);
+          console.log('Expected chain ID (hex):', SOMNIA.id);
+          console.log('Expected chain ID (decimal):', SOMNIA.idDecimal);
+          
+          // Check if we're on the correct network (either hex or decimal format)
+          if (chainId !== SOMNIA.id && chainId !== SOMNIA.idDecimal) {
+            console.log('Not on Somnia network, attempting to switch...');
             try {
+              // Try to switch to the network
+              console.log('Attempting to switch to Somnia...');
               await window.ethereum.request({ 
-                method: 'wallet_addEthereumChain', 
-                params: [{
-                  chainId: SOMNIA.id,
-                  chainName: 'Somnia Testnet',
-                  nativeCurrency: { 
-                    name: 'Somnia', 
-                    symbol: 'STT', 
-                    decimals: 18 
-                  },
-                  rpcUrls: [SOMNIA.rpc],
-                  blockExplorerUrls: [SOMNIA.exp]
-                }]
+                method: 'wallet_switchEthereumChain', 
+                params: [{ chainId: SOMNIA.id }] 
               });
-            } catch (addError) {
-              console.error('Failed to add network:', addError);
-              throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
+              console.log('Successfully switched to Somnia');
+            } catch (switchError) {
+              console.log('Switch failed, error:', switchError);
+              console.log('Network not found, adding it...');
+              // If the network doesn't exist, add it
+              try {
+                console.log('Adding Somnia network...');
+                await window.ethereum.request({ 
+                  method: 'wallet_addEthereumChain', 
+                  params: [{
+                    chainId: SOMNIA.id,
+                    chainName: 'Somnia Testnet',
+                    nativeCurrency: { 
+                      name: 'Somnia', 
+                      symbol: 'STT', 
+                      decimals: 18 
+                    },
+                    rpcUrls: [SOMNIA.rpc],
+                    blockExplorerUrls: [SOMNIA.exp]
+                  }]
+                });
+                console.log('Successfully added Somnia network');
+              } catch (addError) {
+                console.error('Failed to add network:', addError);
+                throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
+              }
             }
+          } else {
+            console.log('Already on Somnia network');
           }
+        } catch (e) {
+          console.error('Error in ensureSomnia:', e);
+          throw e;
         }
       }
 
       async function connectWallet() {
+        console.log('connectWallet called');
+        
         if (!window.ethereum) { 
+          console.error('MetaMask not found');
           alert('Install MetaMask'); 
           return null; 
         }
-        await ensureSomnia();
-        provider = new ethers.BrowserProvider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = await provider.getSigner();
-        myAddr = await signer.getAddress();
-        contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+        
+        console.log('MetaMask found, ensuring Somnia network...');
+        try {
+          await ensureSomnia();
+          console.log('Somnia network ensured');
+        } catch (e) {
+          console.error('Failed to ensure Somnia network:', e);
+          throw e;
+        }
+        
+        console.log('Creating provider...');
+        try {
+          provider = new ethers.BrowserProvider(window.ethereum);
+          console.log('Provider created');
+        } catch (e) {
+          console.error('Failed to create provider:', e);
+          throw e;
+        }
+        
+        console.log('Requesting accounts...');
+        try {
+          await provider.send("eth_requestAccounts", []);
+          console.log('Accounts requested');
+        } catch (e) {
+          console.error('Failed to request accounts:', e);
+          throw e;
+        }
+        
+        console.log('Getting signer...');
+        try {
+          signer = await provider.getSigner();
+          console.log('Signer obtained');
+        } catch (e) {
+          console.error('Failed to get signer:', e);
+          throw e;
+        }
+        
+        console.log('Getting address...');
+        try {
+          myAddr = await signer.getAddress();
+          console.log('Address obtained:', myAddr);
+        } catch (e) {
+          console.error('Failed to get address:', e);
+          throw e;
+        }
+        
+        console.log('Creating contract...');
+        try {
+          contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+          console.log('Contract created');
+        } catch (e) {
+          console.error('Failed to create contract:', e);
+          throw e;
+        }
+        
+        console.log('Wallet connection successful');
         return myAddr;
       }
 
