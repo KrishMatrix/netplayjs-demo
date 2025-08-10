@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no, minimum-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
     />
-    <title>Somnia Pong - NetplayJS</title>
+    <title>Somnia Pong - Blockchain Gaming</title>
 
     <style>
       html,
@@ -16,8 +16,8 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background-color: #222;
-        font-family: system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
 
       #wallet-ui {
@@ -27,54 +27,80 @@
         right: 16px;
         z-index: 1000;
         display: flex;
-        gap: 8px;
+        gap: 12px;
         align-items: center;
-        padding: 12px;
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 8px;
+        padding: 16px;
+        background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 52, 96, 0.95) 100%);
+        border-radius: 12px;
         color: white;
         font-size: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       }
 
       #wallet-ui button {
-        padding: 8px 16px;
+        padding: 10px 20px;
         border: none;
-        border-radius: 6px;
-        background: #049ef4;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         cursor: pointer;
         font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
       }
 
       #wallet-ui button:hover {
-        background: #0388d1;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      #wallet-ui button:disabled {
+        background: linear-gradient(135deg, #666 0%, #888 100%);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
 
       #wallet-ui input {
-        padding: 6px 12px;
-        border-radius: 6px;
-        border: 1px solid #444;
-        background: #333;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1);
         color: white;
         font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      #wallet-ui input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
       }
 
       #wallet-ui input::placeholder {
-        color: #888;
+        color: rgba(255, 255, 255, 0.6);
       }
 
       #status {
-        opacity: 0.8;
-        font-size: 12px;
+        opacity: 0.9;
+        font-size: 13px;
+        font-weight: 500;
       }
 
       #status a {
-        color: #049ef4;
+        color: #667eea;
         text-decoration: none;
+        font-weight: 600;
       }
 
       #status a:hover {
         text-decoration: underline;
+        color: #764ba2;
       }
 
       #code-button {
@@ -84,15 +110,22 @@
         padding: 12px;
         border-radius: 50%;
         margin-bottom: 0px;
-        background-color: #fff;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         opacity: 0.9;
         z-index: 999;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      #code-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
       }
 
       #code-button img {
         display: block;
         width: 20px;
+        filter: brightness(0) invert(1);
       }
     </style>
   </head>
