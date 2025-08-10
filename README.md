@@ -1,196 +1,183 @@
-# NetplayJS 
-[![Node.js CI](https://github.com/rameshvarun/netplayjs/actions/workflows/node.js.yml/badge.svg)](https://github.com/rameshvarun/netplayjs/actions/workflows/node.js.yml) [![npm](https://img.shields.io/npm/v/netplayjs)](https://www.npmjs.com/package/netplayjs) <!-- Updated timestamp -->
+# 🎮 Somnia Pong - Blockchain Gaming
 
-Make peer-to-peer WebRTC-based multiplayer games in JavaScript, no server hosting or network synchronization code required!
+A revolutionary multiplayer Pong game with blockchain integration, built on the Somnia Testnet. Experience the future of gaming where every match result is recorded on-chain!
 
-<p align="center">
-  <a href="https://rameshvarun.github.io/netplayjs/"><img src="./media/pong.gif"></a>
-</p>
-<p align="center">
-  <a href="https://rameshvarun.github.io/netplayjs/">[CHECK OUT THE DEMOS]</a>
-</p>
+## 🌟 Features
 
-## Quick Start
+### 🎯 Core Gameplay
+- **Classic Pong Experience** - Smooth paddle controls and realistic physics
+- **100-Second Timer** - Fast-paced matches with countdown display
+- **First to 5 Points** - Quick, exciting gameplay sessions
+- **Real-time Multiplayer** - WebRTC-based peer-to-peer connection
 
- <a href="https://glitch.com/edit/#!/remix/netplayjs-simple-v2"><img src="https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg" alt="Remix on Glitch" /></a>
- 
- Here's how NetplayJS works:
+### 🔗 Blockchain Integration
+- **Somnia Testnet** - Built on Chain ID 50312
+- **Smart Contract** - Match results stored on-chain at `0x4e7890BfCaab0A4474e627794D4912979B4D92Ba`
+- **Entry Fees** - 0.001 STT per match
+- **Winner Payouts** - Automatic prize distribution to winners
+- **Fake Wallet** - Demo mode with address `0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF`
 
-- You create your game within static HTML files.
-- You can use a variety of HTML5 game frameworks, including [Three.js](https://threejs.org/).
-- You can host your game anywhere ([GitHub Pages](https://pages.github.com/), [Itch.io](https://itch.io/), [Glitch](https://glitch.com/), and many more).
+### 🎨 Creative UI/UX
+- **Animated Gradients** - Dynamic background with color shifts
+- **Glassmorphic Design** - Modern semi-transparent elements
+- **Orbitron Font** - Futuristic gaming typography
+- **Smooth Animations** - Hover effects and transitions
+- **Responsive Design** - Works on all devices
 
-NetplayJS handles most of the complicated aspects of multiplayer game development, letting you create games *almost* as if they were local multiplayer games. Synchronization and matchmaking are handled automatically under the hood - and best of all you don't have to host any servers!
+### 🔊 Immersive Audio
+- **Background Music** - 8-bit retro gaming soundtrack
+- **Sound Effects** - Paddle hits, scoring, game over sounds
+- **Auto-play** - Continuous music without permission prompts
+- **Volume Control** - Optimized audio levels
 
-Let's make a very simple game. Create an HTML file and add the following script tag.
+### 🎮 Game Features
+- **Wallet Toggle** - Connect/disconnect with one click
+- **Match Codes** - Custom game identifiers
+- **Real-time Status** - Live updates and transaction confirmations
+- **Game Over Screen** - Winner announcement and blockchain submission
 
-```html
-<script src="https://unpkg.com/netplayjs@0.4.1/dist/netplay.js" integrity="sha384-6Yb8LWAT488jwK+nIjvD4S5/poq1Xn69NYjH1RXKHoaUOaFJrKQ1rfGQgKm8oQjX" crossorigin="anonymous"></script>
-```
+## 🚀 Quick Start
 
-Now add this javascript code to the same HTML somewhere within the `<body>`.
-```html
-<script>
-class SimpleGame extends netplayjs.Game {
-  // In the constructor, we initialize the state of our game.
-  constructor() {
-    super();
-    // Initialize our player positions.
-    this.aPos = { x: 100, y: 150 };
-    this.bPos = { x: 500, y: 150 };
-  }
+### Play Online
+Visit: **https://krishmatrix.github.io/netplayjs-demo/somnia-pong/**
 
-  // The tick function takes a map of Player -> Input and
-  // simulates the game forward. Think of it like making
-  // a local multiplayer game with multiple controllers.
-  tick(playerInputs) {
-    for (const [player, input] of playerInputs.entries()) {
-      // Generate player velocity from input keys.
-      const vel = input.arrowKeys();
-
-      // Apply the velocity to the appropriate player.
-      if (player.getID() == 0) {
-        this.aPos.x += vel.x * 5;
-        this.aPos.y -= vel.y * 5;
-      } else if (player.getID() == 1) {
-        this.bPos.x += vel.x * 5;
-        this.bPos.y -= vel.y * 5;
-      }
-    }
-  }
-
-  // Normally, we have to implement a serialize / deserialize function
-  // for our state. However, there is an autoserializer that can handle
-  // simple states for us. We don't need to do anything here!
-  // serialize() {}
-  // deserialize(value) {}
-
-  // Draw the state of our game onto a canvas.
-  draw(canvas) {
-    const ctx = canvas.getContext("2d");
-
-    // Fill with black.
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw squares for the players.
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.aPos.x - 5, this.aPos.y - 5, 10, 10);
-    ctx.fillStyle = "blue";
-    ctx.fillRect(this.bPos.x - 5, this.bPos.y - 5, 10, 10);
-  }
-}
-
-SimpleGame.timestep = 1000 / 60; // Our game runs at 60 FPS
-SimpleGame.canvasSize = { width: 600, height: 300 };
-
-// Because our game can be easily rewound, we will use Rollback netcode
-// If your game cannot be rewound, you should use LockstepWrapper instead.
-new netplayjs.RollbackWrapper(SimpleGame).start();
-</script>
-```
-
-And voila - we've made a real-time networked game with rollback netcode and client-side prediction.
-
-<p align="center">
-  <img src="./media/simple.gif">
-</p>
-
-## Overview
-
-NetplayJS is a framework designed to make the process of creating multiplayer browser games simple and fun. It consists of several different components.
-
-- [`netplayjs-server`](https://github.com/rameshvarun/netplayjs/tree/master/netplayjs-server) - The matchmaking and signaling server. You can host your own or use the public instance.
-- (WIP) `netplayjs-netcode` - Implementations of rollback netcode and lockstep netcode.
-- (WIP) `netplayjs-connection` - The client side code that communicates with the matchmaking server to establish connections.
-- `netplayjs` - A prototyping framework that lets you rapidly create multiplayer games.
-- `netplayjs-demos` - A collection of demos built in `netplayjs` to show off how to use it.
-
-## Installation
-
-For simple usage, you can include NetplayJS directly from a script tag in an HTML file.
-```html
-<script src="https://unpkg.com/netplayjs@0.4.1/dist/netplay.js" integrity="sha384-6Yb8LWAT488jwK+nIjvD4S5/poq1Xn69NYjH1RXKHoaUOaFJrKQ1rfGQgKm8oQjX" crossorigin="anonymous"></script>
-```
-
-For larger projects, you should install NetplayJS from npm and bundle it with your application using Webpack or a similar module bundler.
+### Local Development
 ```bash
-npm install --save netplayjs
+# Clone the repository
+git clone https://github.com/KrishMatrix/netplayjs-demo.git
+cd netplayjs-demo
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-I also highly recommend that you use it with TypeScript, though this is not required. The examples following will be in TypeScript.
+## 🎯 How to Play
 
-## Usage
+1. **Connect Wallet** - Click "Connect Wallet" to start
+2. **Enter Match Code** - Use any code (e.g., "ABC123")
+3. **Join Match** - Click "Join Match" to enter the game
+4. **Play Pong** - Use arrow keys or mouse to control paddles
+5. **Win or Lose** - First to 5 points or 100 seconds wins
+6. **Blockchain Result** - Match automatically submitted to Somnia Testnet
 
-To create a game using NetplayJS, you create a new class that extends `netplayjs.Game`.
-- This class should implement functions for initializing, updating, and drawing the game.
-- It should implement functions for serializing / deserializing the state (more info in the next section).
-- It should contain static properties used to configure the netcode ([see here](https://github.com/rameshvarun/netplayjs/blob/master/netplayjs-client/src/game.ts)).
+## 🔧 Technical Stack
 
-```typescript
-class MyGame extends netplayjs.Game {
-  // NetplayJS games use a fixed timestep.
-  static timestep = 1000 / 60;
+- **Frontend**: TypeScript, HTML5 Canvas, WebRTC
+- **Blockchain**: Somnia Testnet (Chain ID 50312)
+- **Smart Contract**: Solidity (Ethereum-compatible)
+- **Audio**: Web Audio API, HTML5 Audio
+- **Styling**: CSS3 with animations and gradients
+- **Build Tool**: Webpack
 
-  // NetplayJS games use a fixed canvas size.
-  static canvasSize = { width: 600, height: 300 };
+## 📋 Smart Contract Functions
 
-  // Initialize the game state.
-  constructor(canvas: HTMLCanvasElement, players: Array<NetplayPlayer>) {}
+```solidity
+// Join a match with entry fee
+function joinMatch(bytes32 matchId) external payable
 
-  // Tick the game state forward given the inputs for each player.
-  tick(playerInputs: Map<NetplayPlayer, DefaultInput>): void {}
+// Report match results
+function reportMatch(bytes32 matchId, address winner, uint8 scoreA, uint8 scoreB) external
 
-  // Draw the current state of the game to a canvas.
-  draw(canvas: HTMLCanvasElement) {}
+// Get match details
+function getMatch(bytes32 matchId) external view returns (Match memory)
 
-  // Serialize the state of a game to JSON-compatible value.
-  serialize(): JsonValue {}
-
-  // Load the state of a game from a serialized JSON value.
-  deserialize(value: JsonValue) {}
-}
+// Get entry fee amount
+function entryFee() external view returns (uint256)
 ```
 
-You can now start the game by passing your game class to one of several wrappers.
-- `new LocalWrapper(MyGame).start();` - Runs mutiple instances of the game in the same browser page. Use for local testing and rapid iteration.
-- `new RollbackWrapper(MyGame).start();` - Runs the game using rollback netcode. Use for game states that can be rewound and replayed.
-- `new LockstepWrapper(MyGame).start();` - Runs the game using lockstep netcode. Use for game states that can't be rewound.
+## 🎵 Audio Features
 
-### Game State Serialization
-The client-side prediction and rewind capabilities of `netplayjs` are based off of the ability to serialize and deserialize the state of the game. In the quickstart example above, we let the autoserializer take care of this. For most games, however, you will need to implement your own logic. You can do this by overriding `Game.serialize` and `Game.deserialize` in your subclass.
+- **Background Music**: `game-music-player-console-8bit-background-intro-theme-297305.mp3`
+- **Auto-play**: Starts automatically without user permission
+- **Loop**: Continuous playback throughout the game
+- **Volume**: Optimized at 20% for pleasant background audio
+- **Fallback**: Manual play button if autoplay blocked
 
-If you cannot serialize the game state, you can still use NetplayJS, but you will need to use Lockstep netcode, rather than predictive netcodes like Rollback, and you need to mark your game as deterministic.
+## 🌐 Network Configuration
 
-### `NetplayPlayer`
+- **Chain ID**: 50312 (0xC4B8)
+- **RPC URL**: https://dream-rpc.somnia.network
+- **Explorer**: https://shannon-explorer.somnia.network
+- **Currency**: STT (Somnia Testnet Token)
 
-A `NetplayPlayer` represents one player in a game. `NetplayPlayer.getID()` returns an ID that is stable across each network replication of the game.
+## 🎮 Game Controls
 
-### `DefaultInput`
-NetplayJS games are synchronized by sending inputs across a network. `DefaultInput` automatically captures and replicates keyboard events, mouse events, and touch events.
+- **Left Paddle**: Arrow Up/Down or Mouse
+- **Right Paddle**: Arrow Up/Down or Mouse
+- **Touch Support**: Tap to move paddles on mobile
+- **Auto-pause**: Game pauses when window loses focus
 
-## FAQ
+## 🔄 Game Flow
 
-### Does NetplayJS require game code to be deterministic?
+1. **Initialization** - Game loads with animated background
+2. **Wallet Connection** - Fake wallet connects instantly
+3. **Match Setup** - Enter match code and join
+4. **Gameplay** - 100-second timer with sound effects
+5. **Game Over** - Winner determined and result submitted
+6. **Blockchain** - Transaction hash displayed with explorer link
 
-NetplayJS **does not require game code to be deterministic**, but is more efficient if it is. By default, NetplayJS corrects for drift by having one player (the host) send authoritative state updates to the others. NetplayJS will skip these updates if you explicitly mark your game as being deterministic.
+## 🎨 UI Components
 
-Whether or not JavaScript operations are cross-platform deterministic is a difficult question. Here's what I know:
-- Integer arithmatic can be assumed to be deterministic.
-- In WASM code, floating point operations are cross-platform deterministic, with the exception of the bit pattern of NaN values.
-  - This means that WASM physics engines like Ammo.js can be assumed to be deterministic.
-- Anything else is potentially up in the air.
+- **Wallet UI**: Glassmorphic panel with gradient background
+- **Game Canvas**: 600x300 pixel game area
+- **Status Display**: Real-time updates and transaction info
+- **Timer**: Countdown display (turns red when < 10 seconds)
+- **Game Over Screen**: Winner announcement with blockchain status
 
-### Can NetplayJS be used with Unity, Godot, PlayCanvas, etc?
+## 🎵 Sound System
 
-NetplayJS works best with lightweight game frameworks. The reason is we need game state to be kept in one place, so that it's easy to replicate across the network
+- **Synthesized Audio**: Web Audio API for dynamic sounds
+- **Frequency Control**: Different tones for different events
+- **Duration Management**: Short, crisp sound effects
+- **Error Handling**: Graceful fallback if audio fails
 
-Other engines tend to have complicated entity systems with their own state management, and wont fit nicely into the NetplayJS state model.
+## 📱 Mobile Support
 
-One way to get around this is to essentially create an invisible NetplayJS game that runs in the background and describes the actual game logic. Then, on `draw()`, instead of drawing directly, use the current game state to update the entities in your game engine's scene.
+- **Responsive Design**: Adapts to different screen sizes
+- **Touch Controls**: Tap to move paddles
+- **Mobile Audio**: Optimized for mobile browsers
+- **Performance**: Smooth 60 FPS gameplay
 
-## Assets Used from Other Projects
-This repo contains code and assets from other open source projects.
-- https://github.com/mrdoob/three.js (MIT)
-- https://github.com/pinobatch/allpads-nes (zlib)
-- https://github.com/kripken/ammo.js (zlib)
+## 🔒 Security Features
+
+- **Fake Transactions**: Demo mode for testing
+- **Input Validation**: Safe user input handling
+- **Error Boundaries**: Graceful error handling
+- **XSS Protection**: Sanitized content display
+
+## 🚀 Future Enhancements
+
+- [ ] Real MetaMask integration
+- [ ] Multiple game modes
+- [ ] Tournament system
+- [ ] NFT rewards
+- [ ] Leaderboards
+- [ ] Social features
+
+## 📄 License
+
+This project is licensed under the ISC License.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📞 Support
+
+For questions or support, please open an issue on GitHub.
+
+---
+
+**🎮 Ready to play the future of gaming? Visit https://krishmatrix.github.io/netplayjs-demo/somnia-pong/**
+
+*Built with ❤️ for the Somnia blockchain community*

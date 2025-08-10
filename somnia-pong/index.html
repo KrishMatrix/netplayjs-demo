@@ -556,21 +556,77 @@
       let backgroundMusic = null;
       let musicStarted = false;
 
-      // Function to start background music
+      // Function to start background music without permission
       function startBackgroundMusic() {
         if (!musicStarted) {
           backgroundMusic = document.getElementById('backgroundMusic');
           if (backgroundMusic) {
-            backgroundMusic.volume = 0.3; // Set volume to 30%
-            backgroundMusic.play().then(() => {
-              console.log('🎵 Background music started');
-              musicStarted = true;
-            }).catch(e => {
-              console.log('Background music autoplay blocked:', e);
-              // Add a click-to-play button if autoplay is blocked
-              addMusicPlayButton();
-            });
+            backgroundMusic.volume = 0.2; // Set volume to 20%
+            backgroundMusic.loop = true; // Ensure looping
+            
+            // Try multiple approaches to start music without permission
+            const startMusic = () => {
+              backgroundMusic.play().then(() => {
+                console.log('🎵 Background music started successfully');
+                musicStarted = true;
+              }).catch(e => {
+                console.log('Background music autoplay blocked, trying alternative method:', e);
+                // Try with user interaction simulation
+                simulateUserInteraction();
+              });
+            };
+            
+            // Try immediate start
+            startMusic();
+            
+            // Also try on any user interaction
+            document.addEventListener('click', () => {
+              if (!musicStarted) {
+                startMusic();
+              }
+            }, { once: true });
+            
+            document.addEventListener('keydown', () => {
+              if (!musicStarted) {
+                startMusic();
+              }
+            }, { once: true });
           }
+        }
+      }
+      
+      // Function to simulate user interaction for audio context
+      function simulateUserInteraction() {
+        // Create a silent audio context to unlock audio
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = 1; // Very low frequency
+          gainNode.gain.value = 0; // Silent
+          
+          oscillator.start();
+          oscillator.stop(audioContext.currentTime + 0.1);
+          
+          // Try to resume audio context and play music
+          audioContext.resume().then(() => {
+            if (backgroundMusic && !musicStarted) {
+              backgroundMusic.play().then(() => {
+                console.log('🎵 Background music started after audio context unlock');
+                musicStarted = true;
+              }).catch(e => {
+                console.log('Still blocked, adding manual play button:', e);
+                addMusicPlayButton();
+              });
+            }
+          });
+        } catch (e) {
+          console.log('Audio context creation failed:', e);
+          addMusicPlayButton();
         }
       }
 

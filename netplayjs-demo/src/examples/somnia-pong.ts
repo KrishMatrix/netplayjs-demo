@@ -93,6 +93,9 @@ export class Pong extends Game {
       this.gameOver = true;
       this.playSound(200, 0.5, 'sawtooth'); // Game over sound
       
+      // Stop the ball movement when game is over
+      this.ballVelocity = [0, 0];
+      
       // Submit result to blockchain
       if (!this.resultSubmitted && (window as any).__somnia__) {
         this.resultSubmitted = true;
@@ -118,6 +121,11 @@ export class Pong extends Game {
     
     // Check for game over
     this.checkGameOver();
+    
+    // If game is over, don't process further updates
+    if (this.gameOver) {
+      return;
+    }
     
     // The delta time in seconds.
     let dt = Pong.timestep / 1000;
