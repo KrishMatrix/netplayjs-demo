@@ -10,5 +10,8 @@
         "test": "npm run test --workspaces --if-present",
         "format": "npm run format --workspaces --if-present",
         "typecheck": "npm run typecheck --workspaces --if-present"
+    },
+    "dependencies": {
+        "netplayjs": "^0.4.1"
     }
 }
