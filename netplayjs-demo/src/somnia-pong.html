@@ -164,6 +164,13 @@
               console.log('Successfully switched to Somnia');
             } catch (switchError) {
               console.log('Switch failed, error:', switchError);
+              
+              // Check if it's a pending request error
+              if (switchError.code === -32002) {
+                console.log('Network add request already pending, waiting for user...');
+                throw new Error('Please complete the network addition in MetaMask first, then try again.');
+              }
+              
               console.log('Network not found, adding it...');
               // If the network doesn't exist, add it
               try {
@@ -185,6 +192,12 @@
                 console.log('Successfully added Somnia network');
               } catch (addError) {
                 console.error('Failed to add network:', addError);
+                
+                // Check if it's a pending request error
+                if (addError.code === -32002) {
+                  throw new Error('Network addition already in progress. Please complete it in MetaMask first.');
+                }
+                
                 throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
               }
             }
@@ -326,7 +339,15 @@
             console.error('Failed to connect wallet:', e);
             $('wallet').textContent = 'Connection failed';
             $('addNetworkBtn').style.display = 'inline-block';
-            $('status').textContent = 'Please add Somnia Testnet to MetaMask first';
+            
+            // Show specific error messages
+            if (e.message.includes('already in progress') || e.message.includes('complete the network addition')) {
+              $('status').textContent = '⚠️ Network addition in progress. Please complete it in MetaMask first, then try again.';
+            } else if (e.message.includes('Failed to add Somnia Testnet')) {
+              $('status').textContent = '❌ Failed to add network automatically. Click "Add Somnia Network" to add it manually.';
+            } else {
+              $('status').textContent = '❌ Connection failed: ' + e.message;
+            }
           }
         };
 
