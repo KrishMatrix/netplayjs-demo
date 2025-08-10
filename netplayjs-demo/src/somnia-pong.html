@@ -106,9 +106,8 @@
       <div id="status"></div>
     </div>
 
-    <a id="code-button" href="https://github.com/rameshvarun/netplayjs/tree/master/netplayjs-demo/src/examples/somnia-pong.ts" target="_blank">
-      <img src="./files/ic_code_black_24dp.svg" />
-    </a>
+  
+   
 
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script>
     <script>
@@ -189,34 +188,48 @@
                 throw new Error('Failed to switch to Somnia network');
               }
             } else {
-              console.log('No existing Somnia network found, adding it...');
-              try {
-                console.log('Adding Somnia network...');
-                await window.ethereum.request({ 
-                  method: 'wallet_addEthereumChain', 
-                  params: [{
-                    chainId: SOMNIA.id,
-                    chainName: 'Somnia Testnet',
-                    nativeCurrency: { 
-                      name: 'Somnia', 
-                      symbol: 'STT', 
-                      decimals: 18 
-                    },
-                    rpcUrls: [SOMNIA.rpc],
-                    blockExplorerUrls: [SOMNIA.exp]
-                  }]
-                });
-                console.log('Successfully added Somnia network');
-              } catch (addError) {
-                console.error('Failed to add network:', addError);
-                
-                if (addError.code === -32002) {
-                  console.log('Network addition already in progress, waiting for user...');
-                  await waitForNetworkAddition();
-                  return;
+              console.log('No existing Somnia network found, trying to add it with different currency symbols...');
+              
+              // Try different currency symbols
+              const currencySymbols = ['SOM', 'STT', 'SOMNIA', 'TEST'];
+              let networkAdded = false;
+              
+              for (const currency of currencySymbols) {
+                if (await tryAddNetworkWithCurrency(SOMNIA.idCorrectDecimal, currency)) {
+                  networkAdded = true;
+                  break;
                 }
-                
-                throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
+              }
+              
+              if (!networkAdded) {
+                console.log('All currency symbols failed, trying with STT as fallback...');
+                try {
+                  await window.ethereum.request({ 
+                    method: 'wallet_addEthereumChain', 
+                    params: [{
+                      chainId: SOMNIA.idCorrectDecimal,
+                      chainName: 'Somnia Testnet',
+                      nativeCurrency: { 
+                        name: 'Somnia', 
+                        symbol: 'STT', 
+                        decimals: 18 
+                      },
+                      rpcUrls: [SOMNIA.rpc],
+                      blockExplorerUrls: [SOMNIA.exp]
+                    }]
+                  });
+                  console.log('Successfully added Somnia network with STT');
+                } catch (addError) {
+                  console.error('Failed to add network:', addError);
+                  
+                  if (addError.code === -32002) {
+                    console.log('Network addition already in progress, waiting for user...');
+                    await waitForNetworkAddition();
+                    return;
+                  }
+                  
+                  throw new Error('Failed to add Somnia Testnet to MetaMask. Please add it manually.');
+                }
               }
             }
           } else {
@@ -267,6 +280,32 @@
         }
         
         throw new Error('Network addition timeout. Please try connecting again.');
+      }
+
+      // Function to try different currency symbols
+      async function tryAddNetworkWithCurrency(chainId, currencySymbol) {
+        try {
+          console.log(`Trying to add network with Chain ID: ${chainId}, Currency: ${currencySymbol}`);
+          await window.ethereum.request({ 
+            method: 'wallet_addEthereumChain', 
+            params: [{
+              chainId: chainId,
+              chainName: 'Somnia Testnet',
+              nativeCurrency: { 
+                name: 'Somnia', 
+                symbol: currencySymbol, 
+                decimals: 18 
+              },
+              rpcUrls: [SOMNIA.rpc],
+              blockExplorerUrls: [SOMNIA.exp]
+            }]
+          });
+          console.log(`✅ Successfully added network with currency: ${currencySymbol}`);
+          return true;
+        } catch (error) {
+          console.log(`❌ Failed to add network with currency ${currencySymbol}:`, error);
+          return false;
+        }
       }
 
       // Function to detect the correct Chain ID for Somnia
@@ -475,20 +514,20 @@
         $('addNetworkBtn').onclick = async () => {
           console.log('Add network button clicked');
           try {
-            await window.ethereum.request({ 
-              method: 'wallet_addEthereumChain', 
-              params: [{
-                chainId: SOMNIA.id,
-                chainName: 'Somnia Testnet',
-                nativeCurrency: { 
-                  name: 'Somnia', 
-                  symbol: 'STT', 
-                  decimals: 18 
-                },
-                rpcUrls: [SOMNIA.rpc],
-                blockExplorerUrls: [SOMNIA.exp]
-              }]
-            });
+                          await window.ethereum.request({ 
+                method: 'wallet_addEthereumChain', 
+                params: [{
+                  chainId: SOMNIA.idCorrectDecimal, // Use 50360
+                  chainName: 'Somnia Testnet',
+                  nativeCurrency: { 
+                    name: 'Somnia', 
+                    symbol: 'SOM', // Try different currency symbol
+                    decimals: 18 
+                  },
+                  rpcUrls: [SOMNIA.rpc],
+                  blockExplorerUrls: [SOMNIA.exp]
+                }]
+              });
             $('status').textContent = '✅ Network added! Now try connecting again.';
             $('addNetworkBtn').style.display = 'none';
           } catch (e) {
@@ -503,7 +542,7 @@
                 <strong>Manual Setup:</strong><br>
                 1. Open MetaMask<br>
                 2. Click network dropdown → "Add Network" → "Add Network Manually"<br>
-                3. Enter: Network Name: Somnia Testnet, RPC URL: https://dream-rpc.somnia.network, Chain ID: 50312, Currency: STT
+                3. Enter: Network Name: Somnia Testnet, RPC URL: https://dream-rpc.somnia.network, Chain ID: 50360, Currency: SOM
               `;
             }
           }
