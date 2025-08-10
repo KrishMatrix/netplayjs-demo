@@ -57,6 +57,29 @@ export class Pong extends Game {
   gameOver: boolean = false;
   matchStartTime: number = 0;
   resultSubmitted: boolean = false;
+  
+  // Sound effects
+  private playSound(frequency: number, duration: number, type: string = 'sine') {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = type as OscillatorType;
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    } catch (e) {
+      console.log('Sound play failed:', e);
+    }
+  }
 
   checkGameOver(): void {
     if (this.gameOver) return;
@@ -67,6 +90,7 @@ export class Pong extends Game {
     
     if (timeUp || pointsDone) {
       this.gameOver = true;
+      this.playSound(200, 0.5, 'sawtooth'); // Game over sound
       
       // Submit result to blockchain
       if (!this.resultSubmitted && (window as any).__somnia__) {
@@ -158,6 +182,7 @@ export class Pong extends Game {
       this.ballVelocity[0] = -this.ballVelocity[0];
       this.ballVelocity[1] = BALL_MOVE_SPEED * Math.sin(2 * offset);
       this.ballPosition[0] = LEFT_PADDLE_X + PADDLE_WIDTH;
+      this.playSound(400, 0.1, 'sine'); // Paddle hit sound
     }
 
     if (
@@ -181,10 +206,12 @@ export class Pong extends Game {
       this.ballVelocity[0] = -this.ballVelocity[0];
       this.ballVelocity[1] = BALL_MOVE_SPEED * Math.sin(2 * offset);
       this.ballPosition[0] = RIGHT_PADDLE_X - BALL_WIDTH;
+      this.playSound(400, 0.1, 'sine'); // Paddle hit sound
     }
 
     if (this.ballPosition[0] > PONG_WIDTH) {
       this.leftScore += 1;
+      this.playSound(800, 0.2, 'square'); // Score sound
       this.ballPosition = [
         PONG_WIDTH / 2 - BALL_WIDTH / 2,
         PONG_HEIGHT / 2 - BALL_HEIGHT / 2,
@@ -193,6 +220,7 @@ export class Pong extends Game {
     }
     if (this.ballPosition[0] < -BALL_HEIGHT) {
       this.rightScore += 1;
+      this.playSound(800, 0.2, 'square'); // Score sound
       this.ballPosition = [
         PONG_WIDTH / 2 - BALL_WIDTH / 2,
         PONG_HEIGHT / 2 - BALL_HEIGHT / 2,

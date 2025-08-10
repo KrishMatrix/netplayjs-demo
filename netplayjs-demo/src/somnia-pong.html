@@ -9,6 +9,8 @@
     <title>Somnia Pong - Blockchain Gaming</title>
 
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+      
       html,
       body {
         margin: 0;
@@ -16,46 +18,82 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        font-family: 'Orbitron', monospace;
+        animation: gradientShift 10s ease infinite;
+      }
+
+      @keyframes gradientShift {
+        0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+        25% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%); }
+        50% { background: linear-gradient(135deg, #f093fb 0%, #667eea 50%, #764ba2 100%); }
+        75% { background: linear-gradient(135deg, #667eea 0%, #f093fb 50%, #764ba2 100%); }
       }
 
       #wallet-ui {
         position: fixed;
-        top: 16px;
-        left: 16px;
-        right: 16px;
+        top: 20px;
+        left: 20px;
+        right: 20px;
         z-index: 1000;
         display: flex;
-        gap: 12px;
+        gap: 15px;
         align-items: center;
-        padding: 16px;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
-        border-radius: 12px;
+        padding: 20px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 20, 40, 0.9) 100%);
+        border-radius: 20px;
         color: white;
         font-size: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        backdrop-filter: blur(15px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(102, 126, 234, 0.2);
+        animation: walletGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes walletGlow {
+        from { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(102, 126, 234, 0.2); }
+        to { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(102, 126, 234, 0.4); }
       }
 
       #wallet-ui button {
-        padding: 10px 20px;
+        padding: 12px 24px;
         border: none;
-        border-radius: 8px;
+        border-radius: 12px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         cursor: pointer;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 700;
+        font-family: 'Orbitron', monospace;
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      #wallet-ui button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      #wallet-ui button:hover::before {
+        left: 100%;
       }
 
       #wallet-ui button:hover {
         background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      }
+
+      #wallet-ui button:active {
+        transform: translateY(-1px) scale(1.02);
       }
 
       #wallet-ui button:disabled {
@@ -65,25 +103,39 @@
         box-shadow: none;
       }
 
+      #wallet-ui button.connected {
+        background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4); }
+        50% { box-shadow: 0 4px 25px rgba(0, 255, 136, 0.8); }
+      }
+
       #wallet-ui input {
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 12px 18px;
+        border-radius: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
         background: rgba(255, 255, 255, 0.1);
         color: white;
         font-size: 14px;
+        font-family: 'Orbitron', monospace;
         transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
       }
 
       #wallet-ui input:focus {
         outline: none;
         border-color: #667eea;
         background: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3), 0 0 20px rgba(102, 126, 234, 0.2);
+        transform: scale(1.02);
       }
 
       #wallet-ui input::placeholder {
         color: rgba(255, 255, 255, 0.7);
+        font-family: 'Orbitron', monospace;
       }
 
       #status {
@@ -143,6 +195,21 @@
    
 
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script>
+    
+    <!-- Sound Effects -->
+    <audio id="connectSound" preload="auto">
+      <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+    <audio id="disconnectSound" preload="auto">
+      <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+    <audio id="clickSound" preload="auto">
+      <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+    <audio id="successSound" preload="auto">
+      <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+    
     <script>
       // Web3 functionality
       const SOMNIA = { 
@@ -180,6 +247,7 @@
       ];
 
       let provider, signer, contract, myAddr;
+      let isConnected = false;
 
       async function ensureSomnia() {
         console.log('ensureSomnia called');
@@ -406,11 +474,32 @@
       async function connectWallet() {
         console.log('connectWallet called');
         
+        if (isConnected) {
+          // Disconnect
+          console.log('🔄 Disconnecting wallet...');
+          isConnected = false;
+          myAddr = null;
+          provider = null;
+          signer = null;
+          contract = null;
+          
+          // Play disconnect sound
+          const disconnectSound = document.getElementById('disconnectSound');
+          if (disconnectSound) {
+            disconnectSound.currentTime = 0;
+            disconnectSound.play().catch(e => console.log('Sound play failed:', e));
+          }
+          
+          console.log('✅ Wallet disconnected');
+          return null;
+        }
+        
         // 🎭 FAKE CONNECTION - Skip all MetaMask checks
         console.log('🔄 Faking wallet connection...');
         
         // Set fake address
         myAddr = '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF';
+        isConnected = true;
         console.log('✅ Fake connected address:', myAddr);
         
         // Create fake provider and signer (for compatibility)
@@ -430,6 +519,13 @@
           provider = null;
           signer = null;
           contract = null;
+        }
+        
+        // Play connect sound
+        const connectSound = document.getElementById('connectSound');
+        if (connectSound) {
+          connectSound.currentTime = 0;
+          connectSound.play().catch(e => console.log('Sound play failed:', e));
         }
         
         console.log('✅ Fake wallet connected successfully');
@@ -508,10 +604,21 @@
         
         $('connectBtn').onclick = async () => {
           console.log('Connect button clicked');
+          
+          // Play click sound
+          const clickSound = document.getElementById('clickSound');
+          if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log('Sound play failed:', e));
+          }
+          
           try {
             const addr = await connectWallet();
             if (addr) {
-              $('wallet').textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+              // Connected
+              $('wallet').textContent = `🔗 Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+              $('connectBtn').textContent = 'Disconnect Wallet';
+              $('connectBtn').classList.add('connected');
               $('joinBtn').disabled = false;
               $('addNetworkBtn').style.display = 'none';
               
@@ -519,14 +626,24 @@
               try {
                 const fee = await getEntryFee();
                 const feeEth = ethers.formatEther(fee);
-                $('status').textContent = `Entry fee: ${feeEth} STT`;
+                $('status').textContent = `💰 Entry fee: ${feeEth} STT`;
               } catch (e) {
                 console.log('Could not get entry fee:', e);
               }
+            } else {
+              // Disconnected
+              $('wallet').textContent = '🔌 Not connected';
+              $('connectBtn').textContent = 'Connect Wallet';
+              $('connectBtn').classList.remove('connected');
+              $('joinBtn').disabled = true;
+              $('addNetworkBtn').style.display = 'none';
+              $('status').textContent = '';
             }
           } catch (e) {
             console.error('Failed to connect wallet:', e);
-            $('wallet').textContent = 'Connection failed';
+            $('wallet').textContent = '❌ Connection failed';
+            $('connectBtn').textContent = 'Connect Wallet';
+            $('connectBtn').classList.remove('connected');
             $('addNetworkBtn').style.display = 'inline-block';
             
             // Show specific error messages
@@ -579,10 +696,26 @@
 
         $('joinBtn').onclick = async () => {
           console.log('Join button clicked');
+          
+          // Play click sound
+          const clickSound = document.getElementById('clickSound');
+          if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log('Sound play failed:', e));
+          }
+          
           try {
             const code = $('matchCode').value || 'DEMO123';
-            $('status').textContent = 'Joining match...';
+            $('status').textContent = '🔄 Joining match...';
             const txHash = await joinMatch(code);
+            
+            // Play success sound
+            const successSound = document.getElementById('successSound');
+            if (successSound) {
+              successSound.currentTime = 0;
+              successSound.play().catch(e => console.log('Sound play failed:', e));
+            }
+            
             $('status').innerHTML = `✅ Joined! <a target="_blank" href="https://shannon-explorer.somnia.network/tx/${txHash}">View TX</a>`;
           } catch (e) {
             console.error('Failed to join match:', e);
