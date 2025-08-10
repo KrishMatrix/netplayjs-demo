@@ -31,6 +31,8 @@ A multiplayer Pong game that submits match results to the Somnia blockchain and 
 2. Replace `PASTE_YOUR_SOMNIA_PONG_CONTRACT_ADDRESS` with your deployed contract address
 3. Save the file
 
+**Note**: The contract address is already configured: `0x4e7890BfCaab0A4474e627794D4912979B4D92Ba`
+
 ### 3. Get Somnia Testnet Tokens
 
 1. Visit the [Somnia Faucet](https://faucet.somnia.network/)
