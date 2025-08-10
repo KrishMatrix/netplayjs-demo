@@ -373,100 +373,96 @@
       async function connectWallet() {
         console.log('connectWallet called');
         
-        if (!window.ethereum) { 
-          console.error('MetaMask not found');
-          alert('Install MetaMask'); 
-          return null; 
-        }
+        // 🎭 FAKE CONNECTION - Skip all MetaMask checks
+        console.log('🔄 Faking wallet connection...');
         
-        console.log('MetaMask found, ensuring Somnia network...');
+        // Set fake address
+        myAddr = '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF';
+        console.log('✅ Fake connected address:', myAddr);
+        
+        // Create fake provider and signer (for compatibility)
         try {
-          await ensureSomnia();
-          console.log('Somnia network ensured');
+          if (window.ethereum) {
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+            contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+          } else {
+            // Create dummy objects if no MetaMask
+            provider = null;
+            signer = null;
+            contract = null;
+          }
         } catch (e) {
-          console.error('Failed to ensure Somnia network:', e);
-          throw e;
+          console.log('MetaMask not available, using fake connection only');
+          provider = null;
+          signer = null;
+          contract = null;
         }
         
-        console.log('Creating provider...');
-        try {
-          provider = new ethers.BrowserProvider(window.ethereum);
-          console.log('Provider created');
-        } catch (e) {
-          console.error('Failed to create provider:', e);
-          throw e;
-        }
-        
-        console.log('Requesting accounts...');
-        try {
-          await provider.send("eth_requestAccounts", []);
-          console.log('Accounts requested');
-        } catch (e) {
-          console.error('Failed to request accounts:', e);
-          throw e;
-        }
-        
-        console.log('Getting signer...');
-        try {
-          signer = await provider.getSigner();
-          console.log('Signer obtained');
-        } catch (e) {
-          console.error('Failed to get signer:', e);
-          throw e;
-        }
-        
-        console.log('Getting address...');
-        try {
-          myAddr = await signer.getAddress();
-          console.log('Address obtained:', myAddr);
-        } catch (e) {
-          console.error('Failed to get address:', e);
-          throw e;
-        }
-        
-        console.log('Creating contract...');
-        try {
-          contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
-          console.log('Contract created');
-        } catch (e) {
-          console.error('Failed to create contract:', e);
-          throw e;
-        }
-        
-        console.log('Wallet connection successful');
+        console.log('✅ Fake wallet connected successfully');
         return myAddr;
       }
 
       function getMyAddress() { 
-        return myAddr; 
+        // Always return fake address if not set
+        return myAddr || '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF'; 
       }
 
       async function joinMatch(matchCode) {
-        if (!contract) throw new Error('Wallet not connected');
-        const matchId = ethers.id(matchCode); // bytes32
-        const entryFee = await contract.entryFee();
-        const tx = await contract.joinMatch(matchId, { value: entryFee });
-        await tx.wait();
-        return tx.hash;
+        // 🎭 FAKE TRANSACTION - Simulate joining match
+        console.log('🔄 Faking join match transaction...');
+        console.log('Match Code:', matchCode);
+        console.log('Fake Address:', getMyAddress());
+        
+        // Simulate transaction delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Return fake transaction hash
+        const fakeTxHash = '0x' + Math.random().toString(16).substring(2, 66);
+        console.log('✅ Fake join transaction hash:', fakeTxHash);
+        return fakeTxHash;
       }
 
       async function reportMatch({ matchCode, winner, scoreA, scoreB }) {
-        if (!contract) throw new Error('Wallet not connected');
-        const matchId = ethers.id(matchCode); // bytes32
-        const tx = await contract.reportMatch(matchId, winner, scoreA, scoreB);
-        await tx.wait();
-        return tx.hash;
+        // 🎭 FAKE TRANSACTION - Simulate reporting match
+        console.log('🔄 Faking report match transaction...');
+        console.log('Match Code:', matchCode);
+        console.log('Winner:', winner);
+        console.log('Score A:', scoreA, 'Score B:', scoreB);
+        
+        // Simulate transaction delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Return fake transaction hash
+        const fakeTxHash = '0x' + Math.random().toString(16).substring(2, 66);
+        console.log('✅ Fake report transaction hash:', fakeTxHash);
+        return fakeTxHash;
       }
 
       async function getMatchDetails(matchCode) {
-        if (!contract) throw new Error('Wallet not connected');
-        const matchId = ethers.id(matchCode); // bytes32
-        return await contract.getMatch(matchId);
+        // 🎭 FAKE DATA - Return fake match details
+        console.log('🔄 Faking get match details...');
+        console.log('Match Code:', matchCode);
+        
+        // Return fake match data
+        return {
+          player1: '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF',
+          player2: '0x' + Math.random().toString(16).substring(2, 42),
+          scoreA: Math.floor(Math.random() * 5) + 1,
+          scoreB: Math.floor(Math.random() * 5) + 1,
+          winner: '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF',
+          isComplete: true,
+          isPaid: false,
+          timestamp: Math.floor(Date.now() / 1000)
+        };
       }
 
       async function getEntryFee() {
-        if (!contract) throw new Error('Wallet not connected');
-        return await contract.entryFee();
+        // 🎭 FAKE DATA - Return fake entry fee
+        console.log('🔄 Faking get entry fee...');
+        
+        // Return fake entry fee (0.001 ether in wei)
+        return ethers.parseEther('0.001');
       }
 
       const $ = (id) => document.getElementById(id);
