@@ -450,104 +450,166 @@
           return null;
         }
         
-        // 🎭 FAKE CONNECTION - Skip all MetaMask checks
-        console.log('🔄 Faking wallet connection...');
-        
-        // Set fake address
-        myAddr = '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF';
-        isConnected = true;
-        console.log('✅ Fake connected address:', myAddr);
-        
-        // Create fake provider and signer (for compatibility)
+        // Check if MetaMask is installed
+        if (!window.ethereum) {
+          throw new Error('MetaMask is not installed. Please install MetaMask to connect your wallet.');
+        }
+
         try {
-          if (window.ethereum) {
-            provider = new ethers.BrowserProvider(window.ethereum);
-            signer = await provider.getSigner();
-            contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
-          } else {
-            // Create dummy objects if no MetaMask
-            provider = null;
-            signer = null;
-            contract = null;
+          console.log('🔄 Connecting to MetaMask...');
+
+          // Request account access
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+
+          if (!accounts || accounts.length === 0) {
+            throw new Error('No accounts found. Please unlock MetaMask and try again.');
           }
-        } catch (e) {
-          console.log('MetaMask not available, using fake connection only');
-          provider = null;
-          signer = null;
-          contract = null;
+
+          // Get the first account
+          myAddr = accounts[0];
+          console.log('📱 Connected address:', myAddr);
+
+          // Create provider and signer
+          provider = new ethers.BrowserProvider(window.ethereum);
+          signer = await provider.getSigner();
+
+          // Ensure we're on the correct network
+          await ensureSomnia();
+
+          // Create contract instance
+          contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+
+          // Set connected state
+          isConnected = true;
+
+          // Play connect sound
+          const connectSound = document.getElementById('connectSound');
+          if (connectSound) {
+            connectSound.currentTime = 0;
+            connectSound.play().catch(e => console.log('Sound play failed:', e));
+          }
+
+          console.log('✅ Wallet connected successfully');
+          return myAddr;
+
+        } catch (error) {
+          console.error('❌ Wallet connection failed:', error);
+          throw error;
         }
-        
-        // Play connect sound
-        const connectSound = document.getElementById('connectSound');
-        if (connectSound) {
-          connectSound.currentTime = 0;
-          connectSound.play().catch(e => console.log('Sound play failed:', e));
-        }
-        
-        console.log('✅ Fake wallet connected successfully');
-        return myAddr;
       }
 
       function getMyAddress() { 
-        // Always return fake address if not set
-        return myAddr || '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF'; 
+        return myAddr; 
       }
 
       async function joinMatch(matchCode) {
-        // 🎭 FAKE TRANSACTION - Simulate joining match
-        console.log('🔄 Faking join match transaction...');
-        console.log('Match Code:', matchCode);
-        console.log('Fake Address:', getMyAddress());
-        
-        // Simulate transaction delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Return fake transaction hash
-        const fakeTxHash = '0x' + Math.random().toString(16).substring(2, 66);
-        console.log('✅ Fake join transaction hash:', fakeTxHash);
-        return fakeTxHash;
+        if (!contract) {
+          throw new Error('Wallet not connected. Please connect your wallet first.');
+        }
+
+        try {
+          console.log('🔄 Joining match on blockchain...');
+          console.log('Match Code:', matchCode);
+          console.log('Address:', getMyAddress());
+
+          // Convert match code to bytes32
+          const matchId = ethers.id(matchCode);
+          
+          // Call the joinMatch function on the contract
+          const tx = await contract.joinMatch(matchId, { value: ethers.parseEther("0.001") });
+          console.log('📝 Transaction sent:', tx.hash);
+          
+          // Wait for transaction confirmation
+          const receipt = await tx.wait();
+          console.log('✅ Join transaction confirmed:', receipt.hash);
+          
+          return receipt.hash;
+        } catch (error) {
+          console.error('❌ Join match failed:', error);
+          throw error;
+        }
       }
 
       async function reportMatch({ matchCode, winner, scoreA, scoreB }) {
-        // 🎭 FAKE TRANSACTION - Simulate reporting match
-        console.log('🔄 Faking report match transaction...');
-        console.log('Match Code:', matchCode);
-        console.log('Winner:', winner);
-        console.log('Score A:', scoreA, 'Score B:', scoreB);
-        
-        // Simulate transaction delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Return fake transaction hash
-        const fakeTxHash = '0x' + Math.random().toString(16).substring(2, 66);
-        console.log('✅ Fake report transaction hash:', fakeTxHash);
-        return fakeTxHash;
+        if (!contract) {
+          throw new Error('Wallet not connected. Please connect your wallet first.');
+        }
+
+        try {
+          console.log('🔄 Reporting match on blockchain...');
+          console.log('Match Code:', matchCode);
+          console.log('Winner:', winner);
+          console.log('Score A:', scoreA, 'Score B:', scoreB);
+
+          // Convert match code to bytes32
+          const matchId = ethers.id(matchCode);
+          
+          // Call the reportMatch function on the contract
+          const tx = await contract.reportMatch(matchId, winner, scoreA, scoreB);
+          console.log('📝 Transaction sent:', tx.hash);
+          
+          // Wait for transaction confirmation
+          const receipt = await tx.wait();
+          console.log('✅ Report transaction confirmed:', receipt.hash);
+          
+          return receipt.hash;
+        } catch (error) {
+          console.error('❌ Report match failed:', error);
+          throw error;
+        }
       }
 
       async function getMatchDetails(matchCode) {
-        // 🎭 FAKE DATA - Return fake match details
-        console.log('🔄 Faking get match details...');
-        console.log('Match Code:', matchCode);
-        
-        // Return fake match data
-        return {
-          player1: '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF',
-          player2: '0x' + Math.random().toString(16).substring(2, 42),
-          scoreA: Math.floor(Math.random() * 5) + 1,
-          scoreB: Math.floor(Math.random() * 5) + 1,
-          winner: '0xa5ED32a4728651D60D720D72c02a79F7f6F12BBF',
-          isComplete: true,
-          isPaid: false,
-          timestamp: Math.floor(Date.now() / 1000)
-        };
+        if (!contract) {
+          throw new Error('Wallet not connected. Please connect your wallet first.');
+        }
+
+        try {
+          console.log('🔄 Getting match details from blockchain...');
+          console.log('Match Code:', matchCode);
+
+          // Convert match code to bytes32
+          const matchId = ethers.id(matchCode);
+          
+          // Call the getMatch function on the contract
+          const match = await contract.getMatch(matchId);
+          console.log('📊 Match details retrieved:', match);
+          
+          return {
+            player1: match.player1,
+            player2: match.player2,
+            scoreA: match.scoreA,
+            scoreB: match.scoreB,
+            winner: match.winner,
+            isComplete: match.isComplete,
+            isPaid: match.isPaid,
+            timestamp: match.timestamp
+          };
+        } catch (error) {
+          console.error('❌ Get match details failed:', error);
+          throw error;
+        }
       }
 
       async function getEntryFee() {
-        // 🎭 FAKE DATA - Return fake entry fee
-        console.log('🔄 Faking get entry fee...');
-        
-        // Return fake entry fee (0.001 ether in wei)
-        return ethers.parseEther('0.001');
+        if (!contract) {
+          throw new Error('Wallet not connected. Please connect your wallet first.');
+        }
+
+        try {
+          console.log('🔄 Getting entry fee from contract...');
+          
+          // Call the entryFee function on the contract
+          const fee = await contract.entryFee();
+          console.log('💰 Entry fee retrieved:', fee.toString());
+          
+          return fee;
+        } catch (error) {
+          console.error('❌ Get entry fee failed:', error);
+          throw error;
+        }
       }
 
       const $ = (id) => document.getElementById(id);
@@ -742,7 +804,13 @@
             $('addNetworkBtn').style.display = 'inline-block';
             
             // Show specific error messages
-            if (e.message.includes('timeout')) {
+            if (e.message.includes('MetaMask is not installed')) {
+              $('status').textContent = '❌ MetaMask not found. Please install MetaMask extension first.';
+            } else if (e.message.includes('No accounts found')) {
+              $('status').textContent = '❌ Please unlock MetaMask and try again.';
+            } else if (e.message.includes('User rejected')) {
+              $('status').textContent = '❌ Connection rejected. Please approve the connection in MetaMask.';
+            } else if (e.message.includes('timeout')) {
               $('status').textContent = '⏰ Network addition timed out. Please try connecting again.';
             } else if (e.message.includes('Failed to add Somnia Testnet')) {
               $('status').textContent = '❌ Failed to add network automatically. Click "Add Somnia Network" to add it manually.';
